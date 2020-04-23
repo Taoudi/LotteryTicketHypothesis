@@ -1,35 +1,83 @@
 import tensorflow as tf
-from tensorflow import keras
+from tensorflow.keras import datasets,layers,models
+from tensorflow.keras.callbacks import EarlyStopping
+from keras.layers import BatchNormalization
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
 
-CIFAR10 = keras.datasets.cifar10
+
+class Simple_CNN:
+    def __init__(self):
+        self.model = models.Sequential()
+        self.model.add(layers.BatchNormalization())
+        self.model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
+        self.model.add(layers.MaxPooling2D((2, 2)))
+        self.model.add(layers.BatchNormalization())
+        self.model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+        self.model.add(layers.MaxPooling2D((2, 2)))
+        self.model.add(layers.BatchNormalization())
+        self.model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+        self.model.add(layers.Flatten())
+        #self.model.add(layers.BatchNormalization())
+        self.model.add(layers.Dense(64, activation='relu'))
+        self.model.add(layers.Dense(10))
+        self.model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
+        self.es = EarlyStopping(monitor='val_loss', patience=10)
+        self.epochs = 10
+        self.bs = 128
+
+    def fit_(self,X,Y):
+        history = self.model.fit(X, Y, epochs=self.epochs, validation_split=0.1,callbacks=[self.es],batch_size=self.bs) ,
+        return history
+
+    def eval_(self, testX, testY):
+        test_loss, test_acc = self.model.evaluate(testX, testY, verbose=2)
+        return test_loss, test_acc
+
+CIFAR10 = datasets.cifar10
 (train_images, train_labels), (test_images, test_labels) = CIFAR10.load_data()
 train_images = train_images / 255.0
 test_images = test_images / 255.0
-X = train_images.reshape(np.size(train_images,0),3072)
-testX = test_images.reshape(np.size(test_images,0),3072)
-
-Y = np.zeros((train_labels.size, train_labels.max() + 1))
-Y[np.arange(train_labels.size), train_labels] = 1
-
-testY = np.zeros((test_labels.size, test_labels.max() + 1))
-testY[np.arange(test_labels.size), test_labels] = 1
-
-print(Y.shape)
+cnn = Simple_CNN()
+cnn.fit_(train_images, train_labels)
+loss, acc = cnn.eval_(test_images,test_labels)
+print(acc)
 
 
-def SVM(X, Y, test):
+    #X = train_images.reshape(np.size(train_images,0),3072)
+    #testX = test_images.reshape(np.size(test_images,0),3072)
+
+    #Y = np.zeros((train_labels.size, train_labels.max() + 1))
+    #Y[np.arange(train_labels.size), train_labels] = 1
+
+    #testY = np.zeros((test_labels.size, test_labels.max() + 1))
+    #testY[np.arange(test_labels.size), test_labels] = 1
+
+
+
+
+
+
+
+
+
+
+
+def SVM(X, Y, testX,testY):
     clf = svm.SVC()
     clf.fit(X, Y)
-    return clf.predict(test)
+    summ = 0
+    p = clf.predict(test)
+    for i, res in enumerate(p):
+        #print(res, test_labels[i])
+        if res == test_labels[i]:
+            summ += 1
 
-p = SVM(X[0:1000,:],Y[0:1000,:],testX[0:100,:])
+    return(summ / np.size(p))
 
-summ = 0
-for i, res in enumerate(p):
-    if res == testY[i]:
-        summ += 1
 
-print(summ / np.size(p))
+
