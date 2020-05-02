@@ -20,14 +20,14 @@ class Simple_CNN:
         self.model.add(layers.BatchNormalization())
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu'))
         self.model.add(layers.Flatten())
-        #self.model.add(layers.BatchNormalization())
+        self.model.add(layers.BatchNormalization())
         self.model.add(layers.Dense(64, activation='relu'))
         self.model.add(layers.Dense(10))
         self.model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
-        self.es = EarlyStopping(monitor='val_loss', patience=10)
-        self.epochs = 10
+        self.es = EarlyStopping(monitor='val_loss', patience=8)
+        self.epochs = 50
         self.bs = 128
 
     def fit_(self,X,Y):
