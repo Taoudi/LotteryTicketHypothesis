@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow.keras import datasets,layers,models
+from tensorflow.keras import datasets,layers,models,initializers
 from tensorflow.keras.callbacks import EarlyStopping
 from keras.layers import BatchNormalization
 
@@ -11,39 +11,48 @@ from sklearn import svm
 class Simple_CNN:
     def __init__(self):
         self.model = models.Sequential()
+
         self.model.add(layers.BatchNormalization())
         self.model.add(layers.Dropout(0.1))
-        self.model.add(layers.Conv2D(64, (3, 3), activation='relu', input_shape=(32, 32, 3)))
+        self.model.add(layers.Conv2D(64, (3, 3), activation='relu', input_shape=(32, 32, 3),kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.BatchNormalization())
         self.model.add(layers.Dropout(0.1))
-        self.model.add(layers.Conv2D(64, (3, 3), activation='relu', input_shape=(32, 32, 3)))
+        self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
-        self.model.add(layers.Dropout(0.15))
+
         self.model.add(layers.BatchNormalization())
-        self.model.add(layers.Conv2D(128, (3, 3), activation='relu'))
-        self.model.add(layers.Dropout(0.15))
+        self.model.add(layers.Dropout(0.1))
+        self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.BatchNormalization())
-        self.model.add(layers.Conv2D(128, (3, 3), activation='relu'))
+        self.model.add(layers.Dropout(0.1))
+        self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
-        self.model.add(layers.Dropout(0.2))
+
         self.model.add(layers.BatchNormalization())
-        self.model.add(layers.Conv2D(256, (3, 3), activation='relu'))
-        self.model.add(layers.MaxPooling2D((2, 2)))
+        self.model.add(layers.Dropout(0.1))
+        self.model.add(layers.Conv2D(256, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.BatchNormalization())
+        self.model.add(layers.Dropout(0.1))
+        self.model.add(layers.Conv2D(256, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.MaxPooling2D((2, 2),padding='same'))
+
+
+
         self.model.add(layers.Flatten())
-        #self.model.add(layers.BatchNormalization())
-        self.model.add(layers.Dense(256, activation='relu'))
-        self.model.add(layers.Dense(256, activation='relu'))
+        self.model.add(layers.Dense(256, activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.Dense(256, activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.Dense(10))
         #self.model.add(layers.Softmax())
+
         self.model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
-        self.es = EarlyStopping(monitor='val_loss', patience=8)
-        self.epochs = 50
-        self.bs = 128
+        self.es = EarlyStopping(monitor='val_loss', patience=6)
+        self.epochs = 20
+        self.bs = 60
 
     def fit_(self,X,Y):
-        history = self.model.fit(X, Y, epochs=self.epochs, validation_split=0.1,callbacks=[self.es],batch_size=self.bs, workers=1, use_multiprocessing=False) ,
+        history = self.model.fit(X, Y, epochs=self.epochs, validation_split=0.1,callbacks=[self.es],batch_size=self.bs, workers=4, use_multiprocessing=True) ,
         return history
 
     def eval_(self, testX, testY):
@@ -58,8 +67,8 @@ cnn = Simple_CNN()
 cnn.fit_(train_images, train_labels)
 loss, acc = cnn.eval_(test_images,test_labels)
 print(acc)
-if test_acc > 0.76:
-        cnn.save('models/best_net.h5')
+if acc > 0.76:
+        cnn.save('models/CNN_CIFAR10_.h5')
 
     #X = train_images.reshape(np.size(train_images,0),3072)
     #testX = test_images.reshape(np.size(test_images,0),3072)
