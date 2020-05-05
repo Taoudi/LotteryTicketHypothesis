@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 
 """
-    Hyperparameters, data and constants for a FC network
+    Hyperparameters, data and constants for the FC network (LeNet-5)
 """
 
 LAYERS = {
@@ -11,7 +11,7 @@ LAYERS = {
     'layer3' : (10, None)
 }
 
-PRUNING_PERCENTAGES = [0.2, 0.2, 0.1]
+PRUNING_PERCENTAGES = [0.0, 0.5, 0.5, 0.25]
 
 OPTIMIZER_FC = tf.keras.optimizers.Adam(learning_rate=1.2e-3)
 
