@@ -47,17 +47,20 @@ class Simple_CNN:
         self.model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
-        self.es = EarlyStopping(monitor='val_loss', patience=6)
-        self.epochs = 20
+        self.es = EarlyStopping(monitor='val_loss', patience=8)
+        self.epochs = 40
         self.bs = 60
 
     def fit_(self,X,Y):
-        history = self.model.fit(X, Y, epochs=self.epochs, validation_split=0.1,callbacks=[self.es],batch_size=self.bs, workers=4, use_multiprocessing=True) ,
+        history = self.model.fit(X, Y, epochs=self.epochs, validation_split=0.1,callbacks=[self.es],batch_size=self.bs, workers=1, use_multiprocessing=False) ,
         return history
 
     def eval_(self, testX, testY):
         test_loss, test_acc = self.model.evaluate(testX, testY, verbose=2)
         return test_loss, test_acc
+
+    def save_(self,name):
+        self.model.save(str(name))
 
 CIFAR10 = datasets.cifar10
 (train_images, train_labels), (test_images, test_labels) = CIFAR10.load_data()
@@ -67,8 +70,7 @@ cnn = Simple_CNN()
 cnn.fit_(train_images, train_labels)
 loss, acc = cnn.eval_(test_images,test_labels)
 print(acc)
-if acc > 0.76:
-        cnn.save('models/CNN_CIFAR10_.h5')
+cnn.save_("CIFAR.h5")
 
     #X = train_images.reshape(np.size(train_images,0),3072)
     #testX = test_images.reshape(np.size(test_images,0),3072)
