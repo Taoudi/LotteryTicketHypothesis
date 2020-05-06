@@ -11,7 +11,7 @@ LAYERS = {
     'layer3' : (10, None)
 }
 
-PRUNING_PERCENTAGES = [0.0, 0.10, 0.10, 0.05]
+PRUNING_PERCENTAGES = [0.0, 0.036, 0.036, 0.018]
 
 OPTIMIZER_FC = tf.keras.optimizers.Adam(learning_rate=1.2e-3)
 

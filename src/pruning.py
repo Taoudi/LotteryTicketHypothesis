@@ -20,7 +20,7 @@ def oneshot_pruning(network):
         k = np.round((rows*cols)*percent).astype(int)
         flat_weights = weights[idx].flatten()
         flat_mask = mask[idx].flatten()
-        partition = np.argpartition(flat_weights,k)[0:k]
+        partition = np.argpartition(np.abs(flat_weights),k)[0:k]
         flat_mask[partition] = 0
         mask[idx] = flat_mask.reshape((rows,cols))
     return mask
