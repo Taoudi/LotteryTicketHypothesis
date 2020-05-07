@@ -1,0 +1,6 @@
+Total Average Accuracy ([0.0, 0.036, 0.036, 0.018]) (Average over 20 trials):
+Random re-initialization (One-Shot): 0.8514000058174134
+One-Shot: 0.8804350048303604
+Random Pruning: 0.7454649969935417
+Iterative Pruning: 0.9377000004053115
+--------------------------------------------------------

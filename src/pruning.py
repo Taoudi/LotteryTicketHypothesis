@@ -1,4 +1,3 @@
-from constants import PRUNING_PERCENTAGES
 import numpy as np
 
 """
@@ -8,7 +7,7 @@ import numpy as np
 def iterative_pruning():
     pass
 
-def oneshot_pruning(network):
+def oneshot_pruning(network,PRUNING_PERCENTAGES):
     weights = network.get_weights()
     mask = {}
     for idx, layer in enumerate(network.model.layers):
@@ -25,7 +24,7 @@ def oneshot_pruning(network):
         mask[idx] = flat_mask.reshape((rows,cols))
     return mask
 
-def random_pruning(network):
+def random_pruning(network,PRUNING_PERCENTAGES):
     weights = network.get_weights()
     mask = {}
     for idx, layer in enumerate(network.model.layers):

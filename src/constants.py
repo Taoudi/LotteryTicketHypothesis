@@ -13,6 +13,8 @@ LAYERS = {
 
 PRUNING_PERCENTAGES = [0.0, 0.036, 0.036, 0.018]
 
+PRUNING_FRACTION = 0.2
+
 OPTIMIZER_FC = tf.keras.optimizers.Adam(learning_rate=1.2e-3)
 
 MNIST_DATA = keras.datasets.mnist

@@ -69,11 +69,13 @@ class FC_NETWORK:
                 continue
         return new_weights
 
-    def fit_batch(self,data,labels,mask,weights_init,epochs=10):
+    def fit_batch(self,data,labels,mask,weights_init,epochs=10, use_random_init=False):
         n = np.size(data,axis=0)
         n_batch = self.batch_size
-        current_weights = weights_init
-        
+        if not use_random_init:
+            current_weights = weights_init
+        else:
+            current_weights = self.get_weights()
         for e in range(0, epochs):
             x_train, y_train,x_val,y_val = self.shuffle_in_unison(data,labels)
             self.evaluate_model(x_val,y_val)
