@@ -47,19 +47,19 @@ def iterative_pruning_experiment():
         print("TRIAL " + str(k+1) + "/" + str(trials))
         og_network = FC_NETWORK()
 
-        #S = [0.0, 1.0, 1.0, 0.5] # Base case
-        #c = 1-PRUNING_PERCENTAGES[1]**(1/iterations)
-        mask = oneshot_pruning(og_network,LENET_PRUNE_FRACTIONS[iterations])
+        S = [0.0, 1.0, 1.0, 0.5] # Base case
+        c = 1-PRUNING_PERCENTAGES[1]**(1/iterations)
+        mask = oneshot_pruning(og_network,S)
         acc_history = og_network.fit_batch(x_train, y_train, mask, og_network.weights_init, SETTINGS, x_test, y_test)
         histories[iterations,:] += np.asarray(acc_history)
 
         for i in range(0,iterations):
-            #for j,s in enumerate(S):
-                #S[j] = S[j] - S[j]*c
+            for j,s in enumerate(S):
+                S[j] = S[j] - S[j]*c
             
-            #print("Prune iteration: " + str(i+1) + ", S: " + str(S))
+            print("Prune iteration: " + str(i+1) + ", S: " + str(S))
             print("Creating the pruned network")
-            mask = oneshot_pruning(og_network, LENET_PRUNE_FRACTIONS[i])
+            mask = oneshot_pruning(og_network, S)
             pruned_network = FC_NETWORK()
             acc_history = pruned_network.fit_batch(x_train, y_train, mask, og_network.weights_init, SETTINGS, x_test, y_test)
             histories[i,:] += np.asarray(acc_history)
@@ -70,7 +70,7 @@ def iterative_pruning_experiment():
             
     histories = histories/trials
     print(histories)
-    np.savez("data/histories_rand.npz", histories=histories)
+    np.savez("data/histories_50_iter.npz", histories=histories)
 
             
     #tot_acc=float(tot_acc/trials)

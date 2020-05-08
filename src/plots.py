@@ -5,8 +5,8 @@ from constants import SETTINGS, PRUNING_PERCENTAGES
 def plot_lenet_mnist():
     #histories_reinit = np.load("data/histories_rand.npz", allow_pickle=True)['histories']
     histories = np.load("data/histories_50_iter.npz", allow_pickle=True)['histories']
-    iterations = len(histories)-1
-    iterations = 5
+    iterations = len(histories)
+    # iterations = 50
     S = [0.0, 1.0, 1.0, 0.5]
     c = 1-PRUNING_PERCENTAGES[1]**(1/iterations)
     # percentages = PRUNING_PERCENTAGES
@@ -39,11 +39,14 @@ def plot_lenet_mnist():
     s = S[1]
     percentages = np.zeros(iterations)
     for i in range(0,iterations):
-        s = np.around(s - s*c, decimals=3)
+        s = np.around(s - s*c, decimals=10)
         percentages[i] = s
-    print(histories.shape)
+    print(len(histories))
     print(len(percentages))	
-    for i in range(0, iterations):
+    print(iterations)
+    print(percentages)
+    print(range(0,iterations,10))
+    for i in [0,10,20,30,40,49]:
         plt.plot(range(0,len(histories[i,:])*1000,1000), histories[i,:], label=percentages[i])
     
 
@@ -60,7 +63,7 @@ def plot_lenet_mnist():
     plt.title("Test Accuracy on LeNet-5 iterative pruning as training proceeds")
     plt.xlabel("Training Iterations")
     plt.ylabel("Test Accuracy")
-    plt.savefig('test.png')
+    plt.savefig('BIG_TEST2.png')
     plt.show()
 
 plot_lenet_mnist()

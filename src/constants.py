@@ -15,11 +15,11 @@ PRUNING_PERCENTAGES = [0.0, 0.016, 0.016, 0.008]
 
 SETTINGS = {
     'split' : 0.0,
-    'use_random_init' : True,
+    'use_random_init' : False,
     'n_epochs' : 20,
     'eval_test' : True,
-    'trials' : 5,
-    'prune_iterations' : 5
+    'trials' : 1,
+    'prune_iterations' : 50
 }
 
 LENET_PRUNE_FRACTIONS = [
