@@ -11,9 +11,25 @@ LAYERS = {
     'layer3' : (10, None)
 }
 
-PRUNING_PERCENTAGES = [0.0, 0.036, 0.036, 0.018]
+PRUNING_PERCENTAGES = [0.0, 0.016, 0.016, 0.008]
 
-PRUNING_FRACTION = 0.2
+SETTINGS = {
+    'split' : 0.0,
+    'use_random_init' : True,
+    'n_epochs' : 20,
+    'eval_test' : True,
+    'trials' : 5,
+    'prune_iterations' : 2
+}
+
+LENET_PRUNE_FRACTIONS = [
+    [0.0, 0.513, 0.513, 0.2565],
+    [0.0, 0.211, 0.211, 0.1055],
+    #[0.0, 0.07, 0.07, 0.035],
+    #[0.0, 0.036, 0.036, 0.018],
+    #[0.0, 0.019, 0.019, 0.0095],
+    [0.0, 1.0, 1.0, 0.5]
+]
 
 OPTIMIZER_FC = tf.keras.optimizers.Adam(learning_rate=1.2e-3)
 

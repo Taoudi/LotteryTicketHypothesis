@@ -68,21 +68,20 @@ class FC_NETWORK:
             else:
                 continue
         return new_weights
-
-    def fit_batch(self,data,labels,mask,weights_init,epochs=10, use_random_init=False):
+            
+    def fit_batch(self, data, labels, mask, weights_init, settings, test_data=None,test_labels=None):
         n = np.size(data,axis=0)
         n_batch = self.batch_size
-        if not use_random_init:
+        acc_history = []
+        if not settings['use_random_init']:
             current_weights = weights_init
         else:
             current_weights = self.get_weights()
-        for e in range(0, epochs):
-            x_train, y_train,x_val,y_val = self.shuffle_in_unison(data,labels)
-            self.evaluate_model(x_val,y_val)
-            print("Epoch " + str(e+1) + "/" + str(epochs))
-            
+        for e in range(0, settings['n_epochs']):
+            print("Epoch " + str(e+1) + "/" + str(settings['n_epochs']))
+            x_train, y_train, x_val, y_val = self.shuffle_in_unison(data,labels, settings['split'])
             for j in tqdm(range(int(n / n_batch))):
-                masked_weights = self.mask_weights(mask, current_weights) #TODO: Lös detta, det ska ej va weights_init
+                masked_weights = self.mask_weights(mask, current_weights)
                 self.model.set_weights(masked_weights)
                 j_start = j*n_batch
                 j_end = (j+1)*n_batch
@@ -90,9 +89,15 @@ class FC_NETWORK:
                 Ybatch = y_train[j_start:j_end]
                 self.model.train_on_batch(Xbatch,Ybatch)
                 current_weights = self.get_weights()
+            if not settings['eval_test']:
+                self.evaluate_model(x_val, y_val)
+            else:
+                _, test_acc = self.evaluate_model(test_data,test_labels)
+                acc_history.append(test_acc)
 
-        new_weights = self.mask_weights(mask, current_weights) #TODO: what the fuck
+        new_weights = self.mask_weights(mask, current_weights)
         self.model.set_weights(new_weights)
+        return acc_history
 
     def evaluate_model(self, test_data, test_labels):
         test_loss, test_acc = self.model.evaluate(test_data, test_labels, verbose=2)
