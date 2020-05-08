@@ -41,11 +41,11 @@ def plot_lenet_mnist():
         #s = np.around(s - s*c, decimals=3)
         #percentages[i] = s
 
-    for i in range(0, iterations):
+    for i in range(2, iterations-1):
         plt.plot(range(0,len(histories[i,:])*1000,1000), histories[i,:], label=percentages[i], marker=markers[i], color=colors[i])
     
 
-    for i in range(0, iterations):
+    for i in range(2, iterations-1):
         plt.plot(range(0,len(histories_reinit[i,:])*1000,1000), histories_reinit[i,:], label=percentages[i], marker=markers[i], color=colors[i], linestyle='--')
     #plt.plot(range(0,len(histories_reinit[0,:])*1000,1000), histories_reinit[0,:], 
     #label=str(percentages[0]) + "(reinit)", color=colors[0], marker='8', linestyle='--')
