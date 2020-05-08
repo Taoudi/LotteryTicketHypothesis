@@ -70,7 +70,7 @@ def iterative_pruning_experiment():
             
     histories = histories/trials
     print(histories)
-    np.savez("data/histories.npz", histories=histories)
+    np.savez("data/histories_rand.npz", histories=histories)
 
             
     #tot_acc=float(tot_acc/trials)
