@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 from constants import SETTINGS, PRUNING_PERCENTAGES
 
 def plot_lenet_mnist():
-    histories_reinit = np.load("histories_rand.npz", allow_pickle=True)['histories']
-    histories = np.load("iterpr_lenet_trainiter.npz", allow_pickle=True)['histories']
+    histories_reinit = np.load("data/histories_rand.npz", allow_pickle=True)['histories']
+    histories = np.load("data/iterpr_lenet_trainiter.npz", allow_pickle=True)['histories']
     iterations = len(histories)-1
     iterations = 5
     S = [0.0, 1.0, 1.0, 0.5]
@@ -58,6 +58,7 @@ def plot_lenet_mnist():
     plt.title("Test Accuracy on LeNet-5 iterative pruning as training proceeds")
     plt.xlabel("Training Iterations")
     plt.ylabel("Test Accuracy")
+    plt.savefig('test.png')
     plt.show()
 
 plot_lenet_mnist()
