@@ -15,9 +15,12 @@ x_test = x_test / 255.0
 
 def one_shot_pruning_experiment():
     tot_acc = 0.0
-    trials = 20
+    trials = SETTINGS['trials']
+    results = np.zeros(trials)
+    results_loss = np.zeros(trials)
+
     for i in range(0, trials):
-        og_network = FC_NETWORK(use_earlyStopping=True)
+        og_network = FC_NETWORK(i)
         og_network.fit(x_train,y_train,20)
         print("Evaluating original network")
         og_network.evaluate_model(x_test, y_test)
@@ -25,14 +28,21 @@ def one_shot_pruning_experiment():
         #print("Creating the pruned network")
         #mask = random_pruning(og_network)
         mask = oneshot_pruning(og_network, PRUNING_PERCENTAGES)
-        pruned_network = FC_NETWORK(use_earlyStopping=True)
-        pruned_network.fit_batch(x_train, y_train, mask, og_network.weights_init, SETTINGS)
+        pruned_network = FC_NETWORK(i)
+        pruned_network.fit_batch(x_train, y_train, mask, og_network.weights_init, SETTINGS, x_test, y_test)
         print("Evaluating the pruned network")
-        _, test_acc = pruned_network.evaluate_model(x_test, y_test)
+        test_loss, test_acc = pruned_network.evaluate_model(x_test, y_test)
         tot_acc+=test_acc
+        print("Iteration: " + str(i) + ", Test Accuracy: " + str(test_acc))
+        results[i] = test_acc
+        results_loss[i] = test_loss
 
     tot_acc=float(tot_acc/trials)
     print("Total Average Accuracy: " + str(tot_acc))
+    print(results)
+    print(results_loss)
+    np.savez("data/OneShotPruningManyTrialsAcc.npz", histories=results)
+    np.savez("data/OneShotPruningManyTrialsLoss.npz", histories=results_loss)
 
 
 
@@ -69,5 +79,5 @@ def iterative_pruning_experiment():
     np.savez("data/iterpr_lenet_100it_5trials.npz", histories=histories)
 
 
-iterative_pruning_experiment()
-
+#iterative_pruning_experiment()
+one_shot_pruning_experiment()

@@ -16,7 +16,7 @@ class FC_NETWORK:
                 weights[idx] = []                                
         return weights
 
-    def __init__(self, batch_size=60, use_earlyStopping=False, loaded_model=None):
+    def __init__(self,seed=None,batch_size=60, use_earlyStopping=False, loaded_model=None):
         """
             Lenet-300-100 (Lenet-5) Architecture replica, 
             to use on both MNIST and Fashion MNIST
@@ -30,7 +30,7 @@ class FC_NETWORK:
             self.model.add(keras.layers.Flatten(input_shape=(28, 28)))
             for layer in LAYERS:
                 (units, activation) = LAYERS[layer]
-                self.model.add(keras.layers.Dense(units, activation=activation, kernel_initializer=tf.keras.initializers.glorot_normal(seed=1)))
+                self.model.add(keras.layers.Dense(units, activation=activation, kernel_initializer=tf.keras.initializers.glorot_normal(seed=seed)))
         
         
             self.model.compile(optimizer=OPTIMIZER_FC,

@@ -11,14 +11,14 @@ LAYERS = {
     'layer3' : (10, None)
 }
 
-PRUNING_PERCENTAGES = [0.0, 0.003, 0.003, 0.0015]
+PRUNING_PERCENTAGES = [0.0, 0.019, 0.019, 0.008]
 
 SETTINGS = {
-    'split' : 0.0,
+    'split' : 0.1,
     'use_random_init' : False,
     'n_epochs' : 20,
     'eval_test' : True,
-    'trials' : 5,
+    'trials' : 2,
     'prune_iterations' : 100
 }
 
