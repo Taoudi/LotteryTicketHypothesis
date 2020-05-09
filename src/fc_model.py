@@ -100,7 +100,6 @@ class FC_NETWORK:
         return acc_history
 
     def evaluate_model(self, test_data, test_labels):
-        print(test_data.shape)
         print(test_labels.shape)
         test_loss, test_acc = self.model.evaluate(test_data, test_labels, verbose=2)
         return test_loss, test_acc
