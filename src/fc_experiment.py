@@ -37,7 +37,6 @@ def one_shot_pruning_experiment():
 
 
 def iterative_pruning_experiment():
-    #tot_acc = 0.0
     trials = SETTINGS['trials']
     iterations = SETTINGS['prune_iterations']
     
@@ -56,7 +55,7 @@ def iterative_pruning_experiment():
         for i in range(0,iterations):
             for j,s in enumerate(S):
                 S[j] = S[j] - S[j]*c
-            
+
             print("Prune iteration: " + str(i+1) + ", S: " + str(S))
             print("Creating the pruned network")
             mask = oneshot_pruning(og_network, S)
@@ -64,17 +63,10 @@ def iterative_pruning_experiment():
             acc_history = pruned_network.fit_batch(x_train, y_train, mask, og_network.weights_init, SETTINGS, x_test, y_test)
             histories[i,:] += np.asarray(acc_history)
 
-            #print("Evaluating the pruned network, iteration: " + str(i+1))
-            #_, test_acc = pruned_network.evaluate_model(x_test, y_test)
             og_network = pruned_network
             
     histories = histories/trials
-    print(histories)
-    np.savez("data/histories_50_iter.npz", histories=histories)
-
-            
-    #tot_acc=float(tot_acc/trials)
-    #print("Total Average Accuracy: " + str(tot_acc))
+    np.savez("data/iterpr_lenet_100it_5trials.npz", histories=histories)
 
 
 iterative_pruning_experiment()
