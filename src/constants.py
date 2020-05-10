@@ -11,15 +11,19 @@ LAYERS = {
     'layer3' : (10, None)
 }
 
-PRUNING_PERCENTAGES = [0.0, 0.019, 0.019, 0.008]
+PRUNING_PERCENTAGES = [0.0, 0.03, 0.03, 0.015]
+
+
+
+
 
 SETTINGS = {
     'split' : 0.1,
     'use_random_init' : False,
-    'n_epochs' : 20,
+    'n_epochs' : 15,
     'eval_test' : True,
-    'trials' : 50,
-    'prune_iterations' : 100
+    'trials' : 5,
+    'prune_iterations' : 7
 }
 
 LENET_PRUNE_FRACTIONS = [

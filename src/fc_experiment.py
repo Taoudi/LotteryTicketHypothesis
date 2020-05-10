@@ -13,7 +13,7 @@ x_test = x_test / 255.0
 
 #model = tf.keras.models.load_model("models/fc_mnist.h5")
 
-def one_shot_pruning_experiment():
+def one_shot_pruning_experiment(pruning_rates):
     tot_acc = 0.0
     trials = SETTINGS['trials']
     results = np.zeros(trials)
@@ -21,13 +21,13 @@ def one_shot_pruning_experiment():
 
     for i in range(0, trials):
         og_network = FC_NETWORK(i)
-        og_network.fit(x_train,y_train,20)
+        og_network.fit(x_train,y_train,SETTINGS['n_epochs'])
         print("Evaluating original network")
         og_network.evaluate_model(x_test, y_test)
         #print(og_network.get_summary())
         #print("Creating the pruned network")
         #mask = random_pruning(og_network)
-        mask = oneshot_pruning(og_network, PRUNING_PERCENTAGES)
+        mask = oneshot_pruning(og_network, pruning_rates)
         pruned_network = FC_NETWORK(i)
         pruned_network.fit_batch(x_train, y_train, mask, og_network.weights_init, SETTINGS, x_test, y_test)
         print("Evaluating the pruned network")
@@ -41,8 +41,9 @@ def one_shot_pruning_experiment():
     print("Total Average Accuracy: " + str(tot_acc))
     print(results)
     print(results_loss)
-    np.savez("data/OneShotPruningManyTrialsAcc.npz", histories=results)
-    np.savez("data/OneShotPruningManyTrialsLoss.npz", histories=results_loss)
+    return tot_acc
+    #np.savez("data/OneShotPruningManyTrialsAcc.npz", histories=results)
+    #np.savez("data/OneShotPruningManyTrialsLoss.npz", histories=results_loss)
 
 
 
@@ -79,5 +80,32 @@ def iterative_pruning_experiment():
     np.savez("data/iterpr_lenet_100it_5trials.npz", histories=histories)
 
 
+def big_one_shot_pruning_experiment():
+    trials = SETTINGS['trials']
+    iterations = SETTINGS['prune_iterations']
+
+    histories = np.zeros((iterations+1,2))
+    S = [0.0, 1.0, 1.0, 0.5] # Base case
+
+    for i in range(0,iterations):
+        for j,s in enumerate(S):
+            S[j] = S[j] - S[j]*c
+        print(S[1])
+    tot_acc = one_shot_pruning_experiment(S)
+    histories[iterations,0] = S[1]
+    histories[iterations,1] = tot_acc
+    c = 1-PRUNING_PERCENTAGES[1]**(1/iterations)
+    #c = 0.2
+    for i in range(0,iterations):
+        for j,s in enumerate(S):
+            S[j] = S[j] - S[j]*c
+    
+        tot_acc = one_shot_pruning_experiment(S)
+        histories[i,0] = S[1]
+        histories[i,1] = tot_acc
+
+    print("HERE")
+    print(histories)
+    np.savez("data/OneShotPruningDifferentRates.npz", histories=histories)
 #iterative_pruning_experiment()
-one_shot_pruning_experiment()
+big_one_shot_pruning_experiment()
