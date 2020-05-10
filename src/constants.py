@@ -22,7 +22,7 @@ SETTINGS = {
     'use_random_init' : False,
     'n_epochs' : 20,
     'eval_test' : True,
-    'trials' : 5,
+    'trials' : 3,
     'prune_iterations' : 10
 }
 
