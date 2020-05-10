@@ -20,7 +20,7 @@ PRUNING_PERCENTAGES = [0.0, 0.03, 0.03, 0.015]
 SETTINGS = {
     'split' : 0.1,
     'use_random_init' : False,
-    'n_epochs' : 15,
+    'n_epochs' : 20,
     'eval_test' : True,
     'trials' : 5,
     'prune_iterations' : 10
