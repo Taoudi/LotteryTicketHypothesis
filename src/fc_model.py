@@ -70,6 +70,12 @@ class FC_NETWORK:
         return new_weights
             
     def fit_batch(self, data, labels, mask, weights_init, settings, test_data=None,test_labels=None):
+        stop_patience = np.inf
+        if self.early_stopping:
+            stop_patience = settings['patience']
+        patience=0
+        best_acc=0.0
+        current_epoch = 0
         n = np.size(data,axis=0)
         n_batch = self.batch_size
         acc_history = []
@@ -78,6 +84,7 @@ class FC_NETWORK:
         else:
             current_weights = self.get_weights()
         for e in range(0, settings['n_epochs']):
+            current_epoch=e
             print("Epoch " + str(e+1) + "/" + str(settings['n_epochs']))
             x_train, y_train, x_val, y_val = self.shuffle_in_unison(data,labels, settings['split'])
             for j in tqdm(range(int(n / n_batch))):
@@ -89,19 +96,24 @@ class FC_NETWORK:
                 Ybatch = y_train[j_start:j_end]
                 self.model.train_on_batch(Xbatch,Ybatch)
                 current_weights = self.get_weights()
-            if not settings['eval_test']:
-                self.evaluate_model(x_val, y_val)
-            else:
+            if self.early_stopping:
+                _, val_acc = self.evaluate_model(x_val,y_val)
+                if val_acc <= best_acc:
+                    patience=patience+1
+                else:
+                    best_acc=val_acc
+            if settings['eval_test']:
                 _, test_acc = self.evaluate_model(test_data,test_labels)
                 acc_history.append(test_acc)
-
+            if patience>=stop_patience:
+                break
+            
         new_weights = self.mask_weights(mask, current_weights)
         self.model.set_weights(new_weights)
-        return acc_history
+        return acc_history, current_epoch
 
-    def evaluate_model(self, test_data, test_labels):
-        print(test_labels.shape)
-        test_loss, test_acc = self.model.evaluate(test_data, test_labels, verbose=2)
+    def evaluate_model(self, test_data, test_labels,verbose=2):
+        test_loss, test_acc = self.model.evaluate(test_data, test_labels, verbose=verbose)
         return test_loss, test_acc
     
     def save_model(self, filename):
