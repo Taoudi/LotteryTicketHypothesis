@@ -23,7 +23,7 @@ SETTINGS = {
     'n_epochs' : 15,
     'eval_test' : True,
     'trials' : 5,
-    'prune_iterations' : 7
+    'prune_iterations' : 10
 }
 
 LENET_PRUNE_FRACTIONS = [
