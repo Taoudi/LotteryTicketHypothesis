@@ -88,7 +88,7 @@ def big_one_shot_pruning_experiment():
     S = [0.0, 1.0, 1.0, 1.0] # Base case
     c = 1-PRUNING_PERCENTAGES[1]**(1/iterations)
     #
-    # c=0.2
+    c=0.2
     c2 = c/2
 
     for i in range(0,iterations):
@@ -102,7 +102,7 @@ def big_one_shot_pruning_experiment():
     histories[iterations,0] = S[1]
     histories[iterations,1] = tot_acc
     c = 1-PRUNING_PERCENTAGES[1]**(1/iterations)
-    #c=0.2
+    c=0.2
     c2 = c/2
 
     for i in range(0,iterations):
