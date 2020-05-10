@@ -93,45 +93,64 @@ def iterative_pruning_experiment():
     histories = histories/trials
     np.savez("data/iterpr_lenet_20perc.npz", histories=histories)
 
-def big_one_shot_pruning_experiment():
-    trials = SETTINGS['trials']
-    iterations = SETTINGS['prune_iterations']
 
-    histories = np.zeros((iterations+1,2))
-    S = [0.0, 1.0, 1.0, 1.0] # Base case
-    c = 1-PRUNING_PERCENTAGES[1]**(1/iterations)
-    #
-    c=0.2
-    c2 = c/2
-
-    for i in range(0,iterations):
-        for j,s in enumerate(S):
-            if j ==len(S)-1:
-                S[j] = S[j] - S[j]*c2
-            else:
-                S[j] = S[j] - S[j]*c
-        print(S)
-    tot_acc = one_shot_pruning_experiment(S)
-    histories[iterations,0] = S[1]
-    histories[iterations,1] = tot_acc
-    c = 1-PRUNING_PERCENTAGES[1]**(1/iterations)
-    c=0.2
-    c2 = c/2
-
-    for i in range(0,iterations):
-        for j,s in enumerate(S):
-            if j ==len(S)-1:
-                S[j] = S[j] - S[j]*c2
-            else:
-                S[j] = S[j] - S[j]*c
-        print(S)
     
-        tot_acc = one_shot_pruning_experiment(S)
-        histories[i,0] = S[1]
-        histories[i,1] = tot_acc
+def big_one_shot_pruning_experiment():
+    """
+    - For multiple trials:
+        - train original network and evaluate results
+        - find mask depending on weights of og network 
+        - apply mask to a new network and disable corresponding weights
+        - train the new pruned network and evaluate results
+    """
+    percentages, iterations = generate_percentages([0.0, 1.0, 1.0, 1.0], SETTINGS['lower_bound'])
+    #print(percentages)
+    #print(iterations)
+    trials = SETTINGS['trials']
+    og_networks = list()
+    tot_acc = np.zeros(iterations+1)
+    tot_loss = np.zeros(iterations+1)
+  
 
-    print("HERE")
-    print(histories)
-    np.savez("data/OneShotPruningDifferentRates.npz", histories=histories)
-#iterative_pruning_experiment()
+    # Training and evaluating the unpruned network over multiple trials
+    print("Training and Evaluating OG networks")
+
+    for i in range(0,trials):
+        print("TRIAL " + str(i+1) + "/" + str(trials))
+        og_networks.append(FC_NETWORK())
+        og_networks[i].fit(x_train,y_train,SETTINGS['n_epochs'])
+        test_loss,test_acc = og_networks[i].evaluate_model(x_test, y_test)
+        tot_acc[0]+=test_acc
+        tot_loss[0]+=test_loss
+    tot_acc[0]=float(tot_acc[0]/trials)
+    tot_loss[0]=float(tot_loss[0]/trials)
+    
+    # Training and evaluating pruned networks of different pruning rates over multiple trials
+    for j in range(1,iterations+1):
+        print("Training and Evaluating pruned networks, iteration: " + str(j) + "/" + str(iterations))
+        print("Percentage: " + str(percentages[j-1]))
+        for og in og_networks:
+            mask = oneshot_pruning(og, percentages[j-1])
+            pruned_network = FC_NETWORK()
+            pruned_network.fit_batch(x_train, y_train, mask, og.weights_init, SETTINGS, x_test, y_test)
+            test_loss, test_acc = pruned_network.evaluate_model(x_test, y_test)
+            tot_acc[j]+=test_acc
+            tot_loss[j]+=test_loss
+        tot_acc[j]=float(tot_acc[j]/trials)
+        tot_loss[j]=float(tot_loss[j]/trials)
+
+
+    print(tot_acc)
+    print(tot_loss)
+    np.savez("OneShotPruningAcc_5trials_20epochs_20perc.npz", histories=tot_acc)
+    np.savez("OneShotPruningLoss_5trials_20epochs_20perc.npz", histories=tot_loss)
+
+
+
+
+
+
+
+
+ 
 big_one_shot_pruning_experiment()
