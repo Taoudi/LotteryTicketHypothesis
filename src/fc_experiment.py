@@ -85,21 +85,33 @@ def big_one_shot_pruning_experiment():
     iterations = SETTINGS['prune_iterations']
 
     histories = np.zeros((iterations+1,2))
-    S = [0.0, 1.0, 1.0, 0.5] # Base case
+    S = [0.0, 1.0, 1.0, 1.0] # Base case
     c = 1-PRUNING_PERCENTAGES[1]**(1/iterations)
+    #
+    # c=0.2
+    c2 = c/2
 
     for i in range(0,iterations):
         for j,s in enumerate(S):
-            S[j] = S[j] - S[j]*c
-        print(S[1])
+            if j ==len(S)-1:
+                S[j] = S[j] - S[j]*c2
+            else:
+                S[j] = S[j] - S[j]*c
+        print(S)
     tot_acc = one_shot_pruning_experiment(S)
     histories[iterations,0] = S[1]
     histories[iterations,1] = tot_acc
     c = 1-PRUNING_PERCENTAGES[1]**(1/iterations)
-    c = 0.2
+    #c=0.2
+    c2 = c/2
+
     for i in range(0,iterations):
         for j,s in enumerate(S):
-            S[j] = S[j] - S[j]*c
+            if j ==len(S)-1:
+                S[j] = S[j] - S[j]*c2
+            else:
+                S[j] = S[j] - S[j]*c
+        print(S)
     
         tot_acc = one_shot_pruning_experiment(S)
         histories[i,0] = S[1]

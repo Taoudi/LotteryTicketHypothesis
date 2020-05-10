@@ -11,7 +11,7 @@ LAYERS = {
     'layer3' : (10, None)
 }
 
-PRUNING_PERCENTAGES = [0.0, 0.03, 0.03, 0.015]
+PRUNING_PERCENTAGES = [0.0, 0.03, 0.03, 0.06]
 
 
 
