@@ -30,7 +30,7 @@ class FC_NETWORK:
             self.model.add(keras.layers.Flatten(input_shape=(28, 28)))
             for layer in LAYERS:
                 (units, activation) = LAYERS[layer]
-                self.model.add(keras.layers.Dense(units, activation=activation, kernel_initializer=tf.keras.initializers.glorot_normal(seed=1)))
+                self.model.add(keras.layers.Dense(units, activation=activation, kernel_initializer=tf.keras.initializers.glorot_normal(seed=None)))
         
         
             self.model.compile(optimizer=OPTIMIZER_FC,
