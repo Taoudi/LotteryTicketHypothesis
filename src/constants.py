@@ -14,7 +14,7 @@ LAYERS = {
 PRUNING_PERCENTAGES = [0.0, 0.2, 0.2, 0.1]
 
 SETTINGS = {
-    'split' : 0.1,
+    'split' : 0.0,
     'use_random_init' : False,
     'n_epochs' : 20,
     'eval_test' : True,
