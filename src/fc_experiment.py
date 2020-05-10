@@ -73,7 +73,7 @@ def iterative_pruning_experiment():
         og_network = FC_NETWORK()
 
         mask = prune(og_network, percents)
-        acc_history = og_network.fit_batch(x_train, y_train, mask, og_network.weights_init, SETTINGS, x_test, y_test)
+        acc_history,_ = og_network.fit_batch(x_train, y_train, mask, og_network.weights_init, SETTINGS, x_test, y_test)
         histories[iterations,:] += np.asarray(acc_history)
         
         for i in range(0,iterations):
@@ -146,6 +146,7 @@ def big_one_shot_pruning_experiment():
         tot_acc[j]=float(tot_acc[j]/trials)
         tot_loss[j]=float(tot_loss[j]/trials)
         tot_epoch[j] = float(tot_epoch[j]/trials)
+        print(tot_epoch)
 
     print(tot_acc)
     print(tot_loss)

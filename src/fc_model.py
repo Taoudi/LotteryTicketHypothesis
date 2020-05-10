@@ -79,14 +79,16 @@ class FC_NETWORK:
         n = np.size(data,axis=0)
         n_batch = self.batch_size
         acc_history = []
+        x_train, y_train, x_val, y_val = self.shuffle_in_unison(data,labels, settings['split'])
+
         if not settings['use_random_init']:
             current_weights = weights_init
         else:
             current_weights = self.get_weights()
         for e in range(0, settings['n_epochs']):
+            x_train, y_train, _,_ = self.shuffle_in_unison(x_train,y_train,0.0)
             current_epoch=e
             print("Epoch " + str(e+1) + "/" + str(settings['n_epochs']))
-            x_train, y_train, x_val, y_val = self.shuffle_in_unison(data,labels, settings['split'])
             for j in tqdm(range(int(n / n_batch))):
                 masked_weights = self.mask_weights(mask, current_weights)
                 self.model.set_weights(masked_weights)

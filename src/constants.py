@@ -18,7 +18,7 @@ SETTINGS = {
     'use_random_init' : False,
     'n_epochs' : 50,
     'eval_test' : False,
-    'trials' : 2,
+    'trials' : 1,
     'prune_iterations' : 2,
     'lower_bound' : 0.02,
     'patience' : 10
