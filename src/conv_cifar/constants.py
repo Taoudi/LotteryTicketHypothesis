@@ -10,14 +10,17 @@ from tensorflow import keras
 
 SETTINGS_CONV2 = {
     'temp' : 0,
-    'n_epochs' : 20
+    'n_epochs' : 1
 }
 
 SETTINGS_CONV4 = {
-    'temp' : 0
+    'temp' : 0,
+    'n_epochs' : 1
 }
 
+PRUNING_PERCENTAGES = [0.1,0.2,0.1]
 
 OPTIMIZER_CONV2 = tf.keras.optimizers.Adam(learning_rate=2e-4)
+OPTIMIZER_CONV4 = tf.keras.optimizers.Adam(learning_rate=3e-4)
 
 CIFAR10_DATA = keras.datasets.cifar10
