@@ -151,16 +151,9 @@ def big_one_shot_pruning_experiment():
     print(tot_acc)
     print(tot_loss)
     print(tot_epoch)
-    np.savez("OneShotPruningAcc_5trials_50epochs_20perc_ES.npz", histories=tot_acc)
-    np.savez("OneShotPruningLoss_5trials_50epochs_20perc_ES.npz", histories=tot_loss)
-    np.savez("OneShotPruningEpochs_5trials_50epochs_ES.npz", histories=tot_epoch)
+    np.savez("OneShotPruningAcc_5trials_50epochs_20perc_ES_rand.npz", histories=tot_acc)
+    np.savez("OneShotPruningLoss_5trials_50epochs_20perc_ES_rand.npz", histories=tot_loss)
+    np.savez("OneShotPruningEpochs_5trials_50epochs_ES_rand.npz", histories=tot_epoch)
 
 
-
-
-
-
-
-
- 
-big_one_shot_pruning_experiment()
+    big_one_shot_pruning_experiment()
