@@ -5,6 +5,7 @@ import numpy as np
 from tensorflow.keras import layers
 from constants import PRUNING_PERCENTAGES, SETTINGS
 from pruning import random_pruning, oneshot_pruning, prune
+from tools import generate_percentages
 
 (x_train, y_train), (x_test, y_test) = MNIST_DATA.load_data()
 
@@ -42,56 +43,37 @@ def one_shot_pruning_experiment(pruning_rates):
     print(results)
     print(results_loss)
     return tot_acc
-    #np.savez("data/OneShotPruningManyTrialsAcc.npz", histories=results)
-    #np.savez("data/OneShotPruningManyTrialsLoss.npz", histories=results_loss)
-
-def generate_percentages(base_percents, lower_bound):
-    percentages = {}
-    percents = base_percents
-    idx = 0
-    while percents[1] >= lower_bound:
-        new_percents = []
-        for i in range(len(base_percents)):
-            new_percents.append((1-PRUNING_PERCENTAGES[i])*percents[i])
-        
-        percentages[idx] = new_percents
-        percents = new_percents
-        
-        idx += 1
-    
-    return percentages, len(percentages)
 
 def iterative_pruning_experiment():
     trials = SETTINGS['trials']
     #iterations = SETTINGS['prune_iterations']
     percents = [0.0, 1.0, 1.0, 1.0]
     percentages, iterations = generate_percentages(percents, SETTINGS['lower_bound'])
-    histories = np.zeros((iterations+1, SETTINGS['n_epochs']))
-
+    histories = np.zeros((trials, iterations+1, SETTINGS['n_epochs']))
+    es_epochs = np.zeros((trials, iterations+1))
     for k in range(0, trials):
         print("TRIAL " + str(k+1) + "/" + str(trials))
-        og_network = FC_NETWORK()
+        og_network = FC_NETWORK(use_earlyStopping=True)
 
         mask = prune(og_network, percents)
-        acc_history,_ = og_network.fit_batch(x_train, y_train, mask, og_network.weights_init, SETTINGS, x_test, y_test)
-        histories[iterations,:] += np.asarray(acc_history)
-        
+        acc_history, epoch = og_network.fit_batch(x_train, y_train, mask, og_network.weights_init, SETTINGS, x_test, y_test)
+        histories[k, iterations, 0:epoch+1] = np.asarray(acc_history)
+        es_epochs[k, iterations] = epoch
         for i in range(0,iterations):
             S = percentages[i]
 
             print("Prune iteration: " + str(i+1) + "/" + str(iterations) + ", S: " + str(S))
             print("Creating the pruned network")
             mask = prune(og_network, S)
-            pruned_network = FC_NETWORK()
-            acc_history = pruned_network.fit_batch(x_train, y_train, mask, og_network.weights_init, SETTINGS, x_test, y_test)
-            histories[i,:] += np.asarray(acc_history)
-
+            pruned_network = FC_NETWORK(use_earlyStopping=True)
+            acc_history, epoch = pruned_network.fit_batch(x_train, y_train, mask, og_network.weights_init, SETTINGS, x_test, y_test)
+            histories[k, i, 0:epoch+1] = np.asarray(acc_history)
+            es_epochs[k, i] = epoch
             og_network = pruned_network
-        
-            
-            
-    histories = histories/trials
-    np.savez("data/iterpr_lenet_20perc.npz", histories=histories)
+    
+    #histories = histories/trials
+    #es_epochs = float(es_epochs/trials)
+    #np.savez("data/iterpr_lenet_20perc_reinit_es.npz", histories=histories, es_epochs=es_epochs)
 
 
     
@@ -154,6 +136,3 @@ def big_one_shot_pruning_experiment():
     np.savez("OneShotPruningAcc_5trials_50epochs_20perc_ES_rand.npz", histories=tot_acc)
     np.savez("OneShotPruningLoss_5trials_50epochs_20perc_ES_rand.npz", histories=tot_loss)
     np.savez("OneShotPruningEpochs_5trials_50epochs_ES_rand.npz", histories=tot_epoch)
-
-
-big_one_shot_pruning_experiment()

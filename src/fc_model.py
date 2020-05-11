@@ -89,7 +89,7 @@ class FC_NETWORK:
             x_train, y_train, _,_ = self.shuffle_in_unison(x_train,y_train,0.0)
             current_epoch=e
             print("Epoch " + str(e+1) + "/" + str(settings['n_epochs']))
-            for j in tqdm(range(int(n / n_batch))):
+            for j in tqdm(range(int(len(x_train) / n_batch))):
                 masked_weights = self.mask_weights(mask, current_weights)
                 self.model.set_weights(masked_weights)
                 j_start = j*n_batch

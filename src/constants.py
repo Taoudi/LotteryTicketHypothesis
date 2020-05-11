@@ -19,19 +19,9 @@ SETTINGS = {
     'n_epochs' : 50,
     'eval_test' : True,
     'trials' : 5,
-    'prune_iterations' : 2,
     'lower_bound' : 0.02,
     'patience' : 10
 }
-
-LENET_PRUNE_FRACTIONS = [
-    [0.0, 0.513, 0.513, 0.2565],
-    [0.0, 0.211, 0.211, 0.1055],
-    [0.0, 0.07, 0.07, 0.035],
-    [0.0, 0.036, 0.036, 0.018],
-    [0.0, 0.019, 0.019, 0.0095],
-    [0.0, 1.0, 1.0, 0.5]
-]
 
 OPTIMIZER_FC = tf.keras.optimizers.Adam(learning_rate=1.2e-3)
 
