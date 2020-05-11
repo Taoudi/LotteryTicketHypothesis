@@ -4,10 +4,13 @@ from constants import SETTINGS, PRUNING_PERCENTAGES
 from tools import generate_percentages
 
 def plot_figure3_replica():
+    """
+        Plots the replication of figure3 for conference paper: https://arxiv.org/pdf/1803.03635.pdf
+    """
     histories = np.load("data/iterpr_lenet_20perc.npz", allow_pickle=True)['histories']
     #histories_reinit = np.load("data/iterpr_lenet_20perc_reinit.npz", allow_pickle=True)['histories']
     percentages, _ = generate_percentages([0.0, 1.0, 1.0, 1.0], 0.02)
-    """
+    
     markers = {
         0: '8',
         1: 'o',
@@ -17,12 +20,13 @@ def plot_figure3_replica():
         5: '+',
         6: '.'
     }
-    """
+    
+    #Plot of structures: 100.0, 51.3, 21.1, 7.0, 3.6, 1.9
 
-    plt.plot(range(0, len(histories[0])*1000, 1000), histories[len(histories)-1], label="1.0")
+    plt.plot(range(0, len(histories[0])*1000, 1000), histories[len(histories)-1], label="1.0", marker=markers[0])
 
-    for i in [0, 1, 2, 3, 4, 5, 6, 10, 11, 13, 14, 16, 17]:
-        plt.plot(range(0,len(histories[i])*1000,1000), histories[i], label=str(np.around(percentages[i][1], decimals=3)))
+    for idx, i in enumerate([2, 6, 11, 14, 17]):
+        plt.plot(range(0,len(histories[i])*1000,1000), histories[i], label=str(np.around(percentages[i][1], decimals=3)), marker=markers[idx+1])
 
     plt.legend()
     plt.grid()
@@ -31,8 +35,12 @@ def plot_figure3_replica():
     plt.ylabel("Test Accuracy")
     plt.show()
 
-def plot_figure4c_replica():
+    #Plot of structures: 100.0, 51.3,
 
+def plot_figure4c_replica():
+    """
+        Plots the replication of figure 4c for conference paper: https://arxiv.org/pdf/1803.03635.pdf
+    """
     histories = np.load("src/data/OneShotPruningEpochs_5trials_50epochs_ES.npz", allow_pickle=True)['histories']
     histories_rand = np.load("src/data/OneShotPruningEpochs_5trials_50epochs_ES.npz", allow_pickle=True)['histories']
 
@@ -53,3 +61,5 @@ def plot_figure4c_replica():
     plt.ylabel("Early Stopping criterion (val)")
     plt.savefig('Early_Stop.png')
     plt.show()
+
+plot_figure3_replica()

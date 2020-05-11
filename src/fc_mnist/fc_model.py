@@ -6,8 +6,10 @@ from tqdm import tqdm
 import numpy as np
 
 class FC_NETWORK:
-
     def get_weights(self):
+        """
+            Retrieve the weights of the network
+        """
         weights = {}
         for idx, layer in enumerate(self.model.layers):
             if len(layer.get_weights())>0:
@@ -18,8 +20,7 @@ class FC_NETWORK:
 
     def __init__(self,seed=None,batch_size=60, use_earlyStopping=False, loaded_model=None):
         """
-            Lenet-300-100 (Lenet-5) Architecture replica, 
-            to use on both MNIST and Fashion MNIST
+            Fully-connected Lenet-300-100 (Lenet-5) Network Architecture
         """
         self.batch_size = batch_size
         self.pruning_rates = PRUNING_PERCENTAGES
@@ -46,12 +47,18 @@ class FC_NETWORK:
             self.es = EarlyStopping(monitor='val_loss', patience=10)
         
     
-    def fit(self, data, labels, n_epochs=10):
+    def fit(self, data, labels, n_epochs=20):
+        """
+            Train network with given data and labels, number of epochs is 20 by default
+        """
         self.model.fit(x=data, y=labels, batch_size=self.batch_size, 
         validation_split=0.1 if self.early_stopping else None, epochs=n_epochs,
         callbacks=[self.es] if self.early_stopping else None)
 
     def shuffle_in_unison(self, x_train, y_train,split=0.1):
+        """
+            Shuffle the given data to both train and validation sets
+        """
         n = np.size(x_train,axis=0)
         p = np.random.permutation(len(x_train))
         cutoff = int(split*n)
@@ -59,7 +66,10 @@ class FC_NETWORK:
         p_train = p[cutoff:]
         return x_train[p_train], y_train[p_train], x_train[p_val], y_train[p_val]
 
-    def mask_weights(self, mask, weights):  
+    def mask_weights(self, mask, weights):
+        """
+            Apply the mask on the weights, to disable their function
+        """
         new_weights = list()
         for idx, layer in enumerate(self.model.layers):
             if len(layer.get_weights())>0:
@@ -70,7 +80,10 @@ class FC_NETWORK:
         return new_weights
             
     def fit_batch(self, data, labels, mask, weights_init, settings, test_data=None,test_labels=None):
-        stop_patience = np.inf
+        """
+            Train network with possibility of monitoring results each batch. The reasoning behind this is
+            to be able to prune the weights accordingly.
+        """
         if self.early_stopping:
             stop_patience = settings['patience']
         patience=0
@@ -107,21 +120,31 @@ class FC_NETWORK:
             if settings['eval_test']:
                 _, test_acc = self.evaluate_model(test_data,test_labels)
                 acc_history.append(test_acc)
-            if patience>=stop_patience:
-                break
+            if self.early_stopping:
+                if patience>=stop_patience:
+                    break
             
         new_weights = self.mask_weights(mask, current_weights)
         self.model.set_weights(new_weights)
         return acc_history, current_epoch
 
     def evaluate_model(self, test_data, test_labels,verbose=2):
+        """
+            Evaluate the model given the test data (unseen data)
+        """
         test_loss, test_acc = self.model.evaluate(test_data, test_labels, verbose=verbose)
         return test_loss, test_acc
     
     def save_model(self, filename):
+        """
+            Helper-function to save the model
+        """
         self.model.save('models/' + str(filename))
 
     def get_summary(self):
+        """
+            Helper-function to get the summary of the network architecture
+        """
         return self.model.summary()
 
             
