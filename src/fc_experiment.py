@@ -156,4 +156,4 @@ def big_one_shot_pruning_experiment():
     np.savez("OneShotPruningEpochs_5trials_50epochs_ES_rand.npz", histories=tot_epoch)
 
 
-    big_one_shot_pruning_experiment()
+big_one_shot_pruning_experiment()
