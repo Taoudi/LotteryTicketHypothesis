@@ -18,10 +18,10 @@ SETTINGS = {
     'use_random_init' : True,
     'n_epochs' : 20,
     'eval_test' : False,
-    'trials' : 1,
+    'trials' : 5,
     'prune_iterations' : 2,
     'lower_bound' : 0.02,
-    'patience' : 10
+    'patience' : 20
 }
 
 LENET_PRUNE_FRACTIONS = [
