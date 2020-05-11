@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from constants import SETTINGS, PRUNING_PERCENTAGES
-
+from fc_experiment import generate_percentages
 def plot_lenet_mnist():
     #histories_reinit = np.load("data/histories_rand.npz", allow_pickle=True)['histories']
     histories = np.load("data/histories_50_iter.npz", allow_pickle=True)['histories']
@@ -66,4 +66,31 @@ def plot_lenet_mnist():
     plt.savefig('BIG_TEST2.png')
     plt.show()
 
-plot_lenet_mnist()
+def plot_figure4c_replica():
+
+    histories = np.load("src/data/OneShotPruningEpochs_5trials_50epochs_ES.npz", allow_pickle=True)['histories']
+    histories_rand = np.load("src/data/OneShotPruningEpochs_5trials_50epochs_ES.npz", allow_pickle=True)['histories']
+
+    print(histories)
+    perc = generate_percentages([0.0,1.0,1.0,1.0],0.02)
+    #print(perc)
+    percentages = list()
+    percentages.append(0.0)
+    for i in range(0,len(histories)-1):
+        percentages.append(1-np.around(perc[0][i][1], decimals=3))
+    print(percentages)
+    plt.plot(percentages,histories,label="Winning ticket OneShot",marker='+',color='g')
+    plt.plot(percentages,histories_rand,label="Rand Init OneShot",marker='v',color='r')
+    plt.legend()
+    plt.grid()
+    plt.title("Early Stopping iteration for different pruning %")
+    plt.xlabel("Percent of Weights Remaining")
+    plt.ylabel("Early Stopping criterion (val)")
+    plt.savefig('Early_Stop.png')
+    plt.show()
+
+
+plot_early_stop()
+
+
+#plot_lenet_mnist()
