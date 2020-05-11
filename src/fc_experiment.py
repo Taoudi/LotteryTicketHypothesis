@@ -118,7 +118,7 @@ def big_one_shot_pruning_experiment():
 
     for i in range(0,trials):
         print("TRIAL " + str(i+1) + "/" + str(trials))
-        og_networks.append(FC_NETWORK(use_earlyStopping=True))
+        og_networks.append(FC_NETWORK(use_earlyStopping=False))
         mask = prune(og_networks[i], percents)
         _,epoch = og_networks[i].fit_batch(x_train, y_train, mask, og_networks[i].weights_init, SETTINGS, x_test, y_test)
         test_loss,test_acc = og_networks[i].evaluate_model(x_test, y_test)
@@ -135,7 +135,7 @@ def big_one_shot_pruning_experiment():
         print("Percentage: " + str(percentages[j-1]))
         for og in og_networks:
             mask = oneshot_pruning(og, percentages[j-1])
-            pruned_network = FC_NETWORK(use_earlyStopping=True)
+            pruned_network = FC_NETWORK(use_earlyStopping=False)
             _,epoch = pruned_network.fit_batch(x_train, y_train, mask, og.weights_init, SETTINGS, x_test, y_test)
             print(epoch)
             test_loss, test_acc = pruned_network.evaluate_model(x_test, y_test)
@@ -151,9 +151,9 @@ def big_one_shot_pruning_experiment():
     print(tot_acc)
     print(tot_loss)
     print(tot_epoch)
-    np.savez("OneShotPruningAcc_5trials_20epochs_20perc.npz", histories=tot_acc)
-    np.savez("OneShotPruningLoss_5trials_20epochs_20perc.npz", histories=tot_loss)
-    np.savez("OneShotPruningEpochs_5trials_20epochs_20perc.npz", histories=tot_epoch)
+    np.savez("OneShotPruningAcc_5trials_20epochs_20perc_random.npz", histories=tot_acc)
+    np.savez("OneShotPruningLoss_5trials_20epochs_20perc_random.npz", histories=tot_loss)
+    #np.savez("OneShotPruningEpochs_5trials_20epochs_random.npz", histories=tot_epoch)
 
 
 
