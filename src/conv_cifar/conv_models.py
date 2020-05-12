@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
 
-from constants import OPTIMIZER_CONV2, OPTIMIZER_CONV4
+from constants import OPTIMIZER_CONV2, OPTIMIZER_CONV4, OPTIMIZER_CONV6
 from tqdm import tqdm
 
 
@@ -134,11 +134,12 @@ class CONV2_NETWORK(Network):
 
         self.model = models.Sequential()
 
-        #self.model.add(layers.BatchNormalization())
+        self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
         if dropout:
             self.model.add(layers.Dropout(0.1))
-        self.model.add(layers.Conv2D(64, (3, 3), activation='relu', input_shape=(32, 32, 3),kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         #self.model.add(layers.BatchNormalization())
+        self.model.add(layers.BatchNormalization())
         if dropout:
             self.model.add(layers.Dropout(0.1))
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
@@ -163,26 +164,25 @@ class CONV4_NETWORK(Network):
     def __init__(self, dropout=False,use_earlystopping=False):
         self.model = models.Sequential()
 
-        #self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
+        self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
         if dropout:
             self.model.add(layers.Dropout(0.1))
-        self.model.add(layers.Conv2D(64, (3, 3), activation='relu',input_shape=(32, 32, 3), kernel_initializer=initializers.glorot_normal(seed=None)))
-        #self.model.add(layers.BatchNormalization())
+        self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.BatchNormalization())
         if dropout:
             self.model.add(layers.Dropout(0.1))
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
 
-        #self.model.add(layers.BatchNormalization())
+        self.model.add(layers.BatchNormalization())
         if dropout:
             self.model.add(layers.Dropout(0.1))
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
-        #self.model.add(layers.BatchNormalization())
+        self.model.add(layers.BatchNormalization())
         if dropout:
             self.model.add(layers.Dropout(0.1))
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
-
 
         self.model.add(layers.Flatten())
 
@@ -195,3 +195,47 @@ class CONV4_NETWORK(Network):
               metrics=['accuracy'])
         super().__init__(use_earlystopping)
 
+class CONV6_NETWORK(Network):
+    def __init__(self, dropout=False,early_stopping=False):
+        self.model = models.Sequential()
+        self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
+        if dropout:
+            self.model.add(layers.Dropout(0.1))
+        self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.BatchNormalization())
+        if dropout:
+            self.model.add(layers.Dropout(0.1))
+        self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.MaxPooling2D((2, 2)))
+        
+        self.model.add(layers.BatchNormalization())
+        if dropout:
+            self.model.add(layers.Dropout(0.1))
+        self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.BatchNormalization())
+        if dropout:
+            self.model.add(layers.Dropout(0.1))
+        self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.MaxPooling2D((2, 2)))
+        
+        self.model.add(layers.BatchNormalization())
+        if dropout:
+            self.model.add(layers.Dropout(0.1))
+        self.model.add(layers.Conv2D(256, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.BatchNormalization())
+        if dropout:
+            self.model.add(layers.Dropout(0.1))
+        self.model.add(layers.Conv2D(256, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.MaxPooling2D((2, 2),padding='same'))
+
+        self.model.add(layers.Flatten())
+
+        self.model.add(layers.Dense(256,activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.Dense(256,activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+        self.model.add(layers.Dense(10))
+
+
+        self.model.compile(OPTIMIZER_CONV6,
+                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                metrics=['accuracy'])
+        super().__init__(early_stopping)
