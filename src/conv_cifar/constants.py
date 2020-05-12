@@ -15,7 +15,7 @@ SETTINGS_CONV2 = {
 
 SETTINGS_CONV4 = {
     'temp' : 0,
-    'n_epochs' : 5,
+    'n_epochs' : 10,
     'early_stopping':False,
     'split':0.0,
     'use_random_init':False,
