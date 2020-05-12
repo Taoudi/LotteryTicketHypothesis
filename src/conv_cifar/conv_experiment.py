@@ -1,7 +1,7 @@
 import tensorflow as tf
 from constants import CIFAR10_DATA, SETTINGS_CONV2, SETTINGS_CONV4
 from conv_models import CONV2_NETWORK, CONV4_NETWORK
-from tools import generate_percentages, get_weights
+from tools import generate_percentages
 from pruning import oneshot_pruning
 from tensorflow.keras import layers
 
@@ -30,20 +30,21 @@ def simple_test4():
 
 def simple_oneshot_test4():
     percents,iterations = generate_percentages([1.0,1.0,1.0],0.02)
-    percents = percents[14]
-    print(percents)
+    iterations = 4
     og_network = CONV4_NETWORK()
-    init_weights = get_weights(og_network)
+    init_weights = og_network.get_weights()
     og_network.fit(x_train, y_train, SETTINGS_CONV4)
     test_loss, test_acc = og_network.evaluate_model(x_test,y_test)
-    
-    mask = oneshot_pruning(og_network, percents[0],percents[1],percents[2])
+    for i in range(0,iterations,2):
+        print("Dense %: " + str(percents[i][1]))
+        print("Conv/Output %: " + str(percents[i][0]))
+        mask = oneshot_pruning(og_network, percents[i][0],percents[i][1],percents[i][0])
+        pruned_network = CONV4_NETWORK()
+        pruned_network.fit_batch(x_train,y_train,mask,init_weights,SETTINGS_CONV4,x_test,y_test)
+        pruned_network.evaluate_model(x_test,y_test)
 
-    for i,m in enumerate(mask):
-        if isinstance(og_network.model.layers[i],layers.Conv2D):
-            print(m)
-
-    
+        og_network = pruned_network
+        
 
 
     #_,epoch = og_network.fit_batch(x_train, y_train, mask, init_weights, SETTINGS_CONV2, x_test, y_test)

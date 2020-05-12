@@ -1,14 +1,14 @@
 
 import numpy as np
-from tools import get_weights
 from tensorflow.keras import layers
 
 def oneshot_pruning(network,conv_percent,dense_percent,output_percent):
-    weights = get_weights(network)
+    weights = network.get_weights()
     mask = list()
     for idx, layer in enumerate(network.model.layers):
         perc = 0
         if len(weights[idx]) <= 0:
+            mask.append([])
             continue
         if isinstance(layer,layers.Conv2D): # If convolutional layer, mask becomes an array of kernel binaries. 0 means the entire kernel is pruned. (Lowest sum kernels are pruned)
             perc = 1-conv_percent
