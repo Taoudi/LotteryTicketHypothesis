@@ -12,6 +12,7 @@ SETTINGS_CONV2 = {
     'use_random_init': False,
     'eval_test': True,
     'patience' : 2,
+    'use_dropout' : False,
     'pruning_percentages' : [0.1, 0.2, 0.1]
 }
 
@@ -22,6 +23,7 @@ SETTINGS_CONV4 = {
     'use_random_init': False,
     'eval_test': True,
     'patience' : 2,
+    'use_dropout' : False,
     'pruning_percentages' : [0.1, 0.2, 0.1]
 }
 
@@ -32,6 +34,7 @@ SETTINGS_CONV6 = {
     'use_random_init': False,
     'eval_test': True,
     'patience': 2,
+    'use_dropout': False,
     'pruning_percentages' : [0.15, 0.2, 0.1]
 }
 
