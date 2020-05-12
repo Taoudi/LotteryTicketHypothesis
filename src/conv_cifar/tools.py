@@ -1,6 +1,4 @@
-from constants import PRUNING_PERCENTAGES
-
-def generate_percentages(base_percents, lower_bound):
+def generate_percentages(base_percents, lower_bound,PRUNING_PERCENTAGES):
     percentages = {}
     percents = base_percents
     idx = 0
