@@ -16,7 +16,7 @@ test_images = x_test / 255.0
 def iterative_test2():
     percents,iterations = generate_percentages([1.0,1.0,1.0],0.02,SETTINGS_CONV2['pruning_percentages'])
     
-    og_network = CONV2_NETWORK(use_es = SETTINGS_CONV2['use_es'])
+    og_network = CONV2_NETWORK(use_es = SETTINGS_CONV2['use_es'],patience=SETTINGS_CONV2['patience'])
     
     #Save initial weights of the original matrix
     init_weights = og_network.get_weights()
@@ -40,7 +40,7 @@ def iterative_test2():
 def iterative_test4():
     percents,iterations = generate_percentages([1.0,1.0,1.0],0.02,SETTINGS_CONV4['pruning_percentages'])
 
-    og_network = CONV4_NETWORK(use_es = SETTINGS_CONV4['use_es'])
+    og_network = CONV4_NETWORK(use_es = SETTINGS_CONV4['use_es'],patience=SETTINGS_CONV4['patience'])
     
     #Save initial weights of the original matrix
     init_weights = og_network.get_weights()
@@ -65,7 +65,7 @@ def iterative_test4():
 def iterative_test6():
     percents,iterations = generate_percentages([1.0,1.0,1.0],0.02,SETTINGS_CONV6['pruning_percentages'])
     
-    og_network = CONV6_NETWORK(use_es = SETTINGS_CONV6['use_es'])
+    og_network = CONV6_NETWORK(use_es = SETTINGS_CONV6['use_es'],patience=SETTINGS_CONV6['patience'])
 
     #Save initial weights of the original matrix
     init_weights = og_network.get_weights()
