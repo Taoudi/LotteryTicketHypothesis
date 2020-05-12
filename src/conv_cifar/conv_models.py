@@ -96,12 +96,3 @@ class CONV4_NETWORK:
     def save_(self,name):
         self.model.save(str(name))
 
-def get_weights(network):
-    weights = {}
-    for idx, layer in enumerate(network.model.layers):
-        #weights[idx] = layer.get_weights()[0]    
-        if isinstance(layer,layers.Conv2D) or isinstance(layer,layers.Dense):
-            weights[idx] = layer.get_weights()[0]
-            continue
-        weights[idx] = []
-    return weights
