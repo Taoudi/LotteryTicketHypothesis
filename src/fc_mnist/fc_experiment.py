@@ -30,7 +30,7 @@ def iterative_pruning_experiment():
     #es_epochs = np.zeros((trials, iterations+1))
     for k in range(0, trials):
         print("TRIAL " + str(k+1) + "/" + str(trials))
-        og_network = FC_NETWORK()
+        og_network = FC_NETWORK(use_earlyStopping=SETTINGS['use_es'])
         init_weights = og_network.weights_init
         mask = prune(og_network, percents)
         acc_history, _ = og_network.fit_batch(x_train, y_train, mask, init_weights, SETTINGS, x_test, y_test)
@@ -42,7 +42,7 @@ def iterative_pruning_experiment():
             print("Prune iteration: " + str(i+1) + "/" + str(iterations) + ", S: " + str(S))
             print("Creating the pruned network")
             mask = prune(og_network, S)
-            pruned_network = FC_NETWORK()
+            pruned_network = FC_NETWORK(use_earlyStopping=SETTINGS['use_es'])
             acc_history, _ = pruned_network.fit_batch(x_train, y_train, mask, init_weights, SETTINGS, x_test, y_test)
             histories[i] += np.asarray(acc_history)
             #es_epochs[k, i] = epoch
@@ -77,7 +77,7 @@ def one_shot_pruning_experiment():
 
     for i in range(0,trials):
         print("TRIAL " + str(i+1) + "/" + str(trials))
-        og_networks.append(FC_NETWORK(use_earlyStopping=True))
+        og_networks.append(FC_NETWORK(use_earlyStopping=SETTINGS['use_es']))
         mask = prune(og_networks[i], percents)
         _,epoch = og_networks[i].fit_batch(x_train, y_train, mask, og_networks[i].weights_init, SETTINGS, x_test, y_test)
         test_loss,test_acc = og_networks[i].evaluate_model(x_test, y_test)
@@ -94,7 +94,7 @@ def one_shot_pruning_experiment():
         print("Percentage: " + str(percentages[j-1]))
         for og in og_networks:
             mask = prune(og, percentages[j-1])
-            pruned_network = FC_NETWORK(use_earlyStopping=True)
+            pruned_network = FC_NETWORK(use_earlyStopping=SETTINGS['use_es'])
             _,epoch = pruned_network.fit_batch(x_train, y_train, mask, og.weights_init, SETTINGS, x_test, y_test)
             print(epoch)
             test_loss, test_acc = pruned_network.evaluate_model(x_test, y_test)
@@ -110,8 +110,8 @@ def one_shot_pruning_experiment():
     print(tot_acc)
     print(tot_loss)
     print(tot_epoch)
-    np.savez("OneShotPruningAcc_5trials_50epochs_20perc_ES_rand.npz", histories=tot_acc)
-    np.savez("OneShotPruningLoss_5trials_50epochs_20perc_ES_rand.npz", histories=tot_loss)
-    np.savez("OneShotPruningEpochs_5trials_50epochs_ES_rand.npz", histories=tot_epoch)
-
-iterative_pruning_experiment()
+    #np.savez("data/os_acc_.npz", histories=tot_acc)
+    #np.savez("data/OneShotPruningLoss_5trials_20epochs_20perc_random.npz", histories=tot_loss)
+    #np.savez("data/OneShotPruningEpochs_5trials_20epochs_20perc_random.npz", histories=tot_epoch)
+one_shot_pruning_experiment()
+#iterative_pruning_experiment()
