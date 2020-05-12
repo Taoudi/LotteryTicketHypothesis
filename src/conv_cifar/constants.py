@@ -15,9 +15,13 @@ SETTINGS_CONV2 = {
 
 SETTINGS_CONV4 = {
     'temp' : 0,
-    'n_epochs' : 1
+    'n_epochs' : 5,
+    'early_stopping':False,
+    'split':0.0,
+    'use_random_init':False,
+    'eval_test':True
 }
-
+# [Conv2, Dense, Output]
 PRUNING_PERCENTAGES = [0.1,0.2,0.1]
 
 OPTIMIZER_CONV2 = tf.keras.optimizers.Adam(learning_rate=2e-4)
