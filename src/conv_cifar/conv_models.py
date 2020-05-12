@@ -59,17 +59,17 @@ class Network:
         for idx, layer in enumerate(self.model.layers):
             og_weight = layer.get_weights()
             if len(og_weight)>0:
-                if isinstance(layer,layers.Dense):
+                if isinstance(layer,layers.Dense) or isinstance(layer, layers.Conv2D):
                     new_weights.append(weights[idx]*mask[idx])
                     new_weights.append(layer.get_weights()[1])
-                elif isinstance(layer, layers.Conv2D):
+                    """elif isinstance(layer, layers.Conv2D):
                     row, col, kern, filt = weights[idx].shape
                     temp_weight = weights[idx]
                     for i,m in enumerate(mask[idx]):
                         if m == 0:
                             temp_weight[:,:,:,i] = np.zeros((row,col,kern))
                     new_weights.append(temp_weight)
-                    new_weights.append(layer.get_weights()[1])
+                    new_weights.append(layer.get_weights()[1])"""
                 else:
                     for w in layer.get_weights():
                         new_weights.append(w)
