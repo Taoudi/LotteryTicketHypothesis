@@ -12,11 +12,11 @@ from tqdm import tqdm
 
 
 class Network:
-    def __init__(self,use_earlyStopping=False,bs=60):
+    def __init__(self,use_earlyStopping=False,bs=60, patience=10):
         self.batch_size = bs
         self.early_stopping = use_earlyStopping
         if use_earlyStopping:
-            self.es = EarlyStopping(monitor='val_loss', patience=10)
+            self.es = EarlyStopping(monitor='val_loss', patience=patience)
     
     def fit(self,X,Y,SETTINGS):
         history = self.model.fit(X, Y, epochs=SETTINGS['n_epochs'], batch_size=self.batch_size,validation_split=SETTINGS['split'])
@@ -127,8 +127,6 @@ class Network:
         return acc_history, current_epoch
 
 
-
-
 class CONV2_NETWORK(Network):
     def __init__(self, dropout=False,use_es=False):
 
@@ -157,8 +155,6 @@ class CONV2_NETWORK(Network):
         #self.es = EarlyStopping(monitor='val_loss', patience=SETTINGS['patience'])
         super().__init__(use_earlyStopping=use_es)
 
-
-    
 
 class CONV4_NETWORK(Network):
     def __init__(self, dropout=False,use_es=False):

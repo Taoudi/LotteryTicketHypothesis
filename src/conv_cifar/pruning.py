@@ -1,7 +1,7 @@
 import numpy as np
 from tensorflow.keras import layers
 
-def oneshot_pruning(network,conv_percent,dense_percent,output_percent):
+def prune(network,conv_percent,dense_percent,output_percent):
     weights = network.get_weights()
     mask = list()
     for idx, layer in enumerate(network.model.layers):
