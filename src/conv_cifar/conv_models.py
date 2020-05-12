@@ -19,7 +19,7 @@ class Network:
             self.es = EarlyStopping(monitor='val_loss', patience=10)
     
     def fit(self,X,Y,SETTINGS):
-        history = self.model.fit(X, Y, epochs=SETTINGS['n_epochs'], batch_size=self.batch_size)
+        history = self.model.fit(X, Y, epochs=SETTINGS['n_epochs'], batch_size=self.batch_size,validation_split=SETTINGS['split'])
         return history
 
     def evaluate_model(self, testX, testY):
@@ -130,7 +130,7 @@ class Network:
 
 
 class CONV2_NETWORK(Network):
-    def __init__(self, dropout=False,use_earlystopping=False):
+    def __init__(self, dropout=False,use_es=False):
 
         self.model = models.Sequential()
 
@@ -155,13 +155,13 @@ class CONV2_NETWORK(Network):
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
         #self.es = EarlyStopping(monitor='val_loss', patience=SETTINGS['patience'])
-        super().__init__(use_earlystopping)
+        super().__init__(use_earlyStopping=use_es)
 
 
     
 
 class CONV4_NETWORK(Network):
-    def __init__(self, dropout=False,use_earlystopping=False):
+    def __init__(self, dropout=False,use_es=False):
         self.model = models.Sequential()
 
         self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
@@ -193,10 +193,10 @@ class CONV4_NETWORK(Network):
         self.model.compile(OPTIMIZER_CONV4,
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
-        super().__init__(use_earlystopping)
+        super().__init__(use_earlyStopping=use_es)
 
 class CONV6_NETWORK(Network):
-    def __init__(self, dropout=False,early_stopping=False):
+    def __init__(self, dropout=False,use_es=False):
         self.model = models.Sequential()
         self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
         if dropout:
@@ -238,4 +238,4 @@ class CONV6_NETWORK(Network):
         self.model.compile(OPTIMIZER_CONV6,
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                 metrics=['accuracy'])
-        super().__init__(early_stopping)
+        super().__init__(use_earlyStopping=use_es)

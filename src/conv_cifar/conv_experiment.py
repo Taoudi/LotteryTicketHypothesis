@@ -11,51 +11,49 @@ x_test = x_test.astype('float32')
 train_images = x_train / 255.0
 test_images = x_test / 255.0
 
-def simple_test2():
-    network = CONV2_NETWORK()
-    network.fit(x_train, y_train, SETTINGS_CONV2)
-    test_loss, test_acc = network.evaluate_model(x_test,y_test)
-    network.model.summary()
-    print(test_acc)
-
-def simple_test4():
-    network = CONV4_NETWORK()
-    #init_weights = get_weights(network)
-    #print(network.model.get_weights())
-    network.fit(x_train, y_train, SETTINGS_CONV4)
-    test_loss, test_acc = network.evaluate_model(x_test,y_test)
-    #network.model.summary()
-    print(test_acc)
-
 def iterative_test2():
-    percents,iterations = generate_percentages([1.0,1.0,1.0],0.02)
-    iterations = 4
-    og_network = CONV2_NETWORK()
+    percents,iterations = generate_percentages([1.0,1.0,1.0],0.02,SETTINGS_CONV2['pruning_percentages'])
+    
+    og_network = CONV2_NETWORK(use_es = SETTINGS_CONV2['use_es'])
+
+    #Save initial weights of the original matrix
     init_weights = og_network.get_weights()
+
+    #Train original Network
     og_network.fit(x_train, y_train, SETTINGS_CONV2)
+
+    #Evaluate original network
     test_loss, test_acc = og_network.evaluate_model(x_test,y_test)
+
+    #Prune the network for x amount of iterations
     for i in range(0,iterations,2):
-        print("Dense %: " + str(percents[i][1]))
-        print("Conv/Output %: " + str(percents[i][0]))
-        mask = oneshot_pruning(og_network, percents[i][0],percents[i][1],percents[i][0])
-        pruned_network = SETTINGS_CONV2()
+        print("Conv %: " + str(percents[i][0]) + ", Dense %: " + str(percents[i][1]) + ", Output %: " + str(percents[i][2]))
+        mask = oneshot_pruning(og_network, percents[i][0],percents[i][1],percents[i][2])
+        pruned_network = SETTINGS_CONV2(use_es = SETTINGS_CONV2['use_es'])
         pruned_network.fit_batch(x_train,y_train,mask,init_weights,SETTINGS_CONV2,x_test,y_test)
         pruned_network.evaluate_model(x_test,y_test)
 
         og_network = pruned_network
 
 def iterative_test4():
-    percents,iterations = generate_percentages([1.0,1.0,1.0],0.02)
-    iterations = 4
-    og_network = CONV4_NETWORK()
+    percents,iterations = generate_percentages([1.0,1.0,1.0],0.02,SETTINGS_CONV4['pruning_percentages'])
+
+    og_network = CONV4_NETWORK(use_es = SETTINGS_CONV4['use_es'])
+    
+    #Save initial weights of the original matrix
     init_weights = og_network.get_weights()
+
+    #Train original Network
     og_network.fit(x_train, y_train, SETTINGS_CONV4)
+
+    #Evaluate original network
     test_loss, test_acc = og_network.evaluate_model(x_test,y_test)
+
+    #Prune the network for x amount of times and evaluate each iteration
     for i in range(0,iterations,2):
-        print("Dense %: " + str(percents[i][1]))
-        print("Conv/Output %: " + str(percents[i][0]))
-        mask = oneshot_pruning(og_network, percents[i][0],percents[i][1],percents[i][0])
-        pruned_network = CONV4_NETWORK()
+        print("Conv %: " + str(percents[i][0]) + ", Dense %: " + str(percents[i][1]) + ", Output %: " + str(percents[i][2]))
+        mask = oneshot_pruning(og_network, percents[i][0],percents[i][1],percents[i][2])
+        pruned_network = CONV4_NETWORK(use_es =SETTINGS_CONV4['use_es'])
         pruned_network.fit_batch(x_train,y_train,mask,init_weights,SETTINGS_CONV4,x_test,y_test)
         pruned_network.evaluate_model(x_test,y_test)
 
@@ -63,24 +61,31 @@ def iterative_test4():
         
         
 def iterative_test6():
-    percents,iterations = generate_percentages([1.0,1.0,1.0],0.02)
-    iterations = 4
-    og_network = CONV6_NETWORK(SETTINGS_CONV6['early_stopping'])
+    percents,iterations = generate_percentages([1.0,1.0,1.0],0.02,SETTINGS_CONV6['pruning_percentages'])
+    for p in percents:
+        print(percents[p])
+    
+    og_network = CONV6_NETWORK(use_es = SETTINGS_CONV6['use_es'])
+
+    #Save initial weights of the original matrix
     init_weights = og_network.get_weights()
+
+    #Train original network
     og_network.fit(x_train, y_train, SETTINGS_CONV6)
+
+    #Evaluate original network
     test_loss, test_acc = og_network.evaluate_model(x_test,y_test)
+
+    #Prune the network for x amount of times and evaluate each iteration
     for i in range(0,iterations,2):
-        print("Dense %: " + str(percents[i][1]))
-        print("Conv/Output %: " + str(percents[i][0]))
-        mask = oneshot_pruning(og_network, percents[i][0],percents[i][1],percents[i][0])
-        pruned_network = CONV6_NETWORK()
+        print("Conv %: " + str(percents[i][0]) + ", Dense %: " + str(percents[i][1]) + ", Output %: " + str(percents[i][2]))
+        mask = oneshot_pruning(og_network, percents[i][0],percents[i][1],percents[i][2])
+        pruned_network = CONV6_NETWORK(use_es = SETTINGS_CONV6['use_es'])
         pruned_network.fit_batch(x_train,y_train,mask,init_weights,SETTINGS_CONV6,x_test,y_test)
         pruned_network.evaluate_model(x_test,y_test)
 
         og_network = pruned_network
 
-    #_,epoch = og_network.fit_batch(x_train, y_train, mask, init_weights, SETTINGS_CONV2, x_test, y_test)
-    #test_loss,test_acc = og_network.evaluate_model(x_test, y_test)
-    #network.model.summary()
+
 if __name__ == "__main__":
     iterative_test6()
