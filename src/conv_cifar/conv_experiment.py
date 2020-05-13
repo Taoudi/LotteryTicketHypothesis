@@ -4,14 +4,16 @@ from conv_models import CONV2_NETWORK, CONV4_NETWORK,CONV6_NETWORK
 from tools import generate_percentages
 from pruning import prune
 import numpy as np
+from tensorflow.keras import layers
 
 (x_train, y_train), (x_test, y_test) = CIFAR10_DATA.load_data()
 
 x_train = x_train.astype('float32')
 x_test = x_test.astype('float32')
 
-train_images = x_train / 255.0
-test_images = x_test / 255.0
+x_train = x_train / 255.0
+x_test = x_test / 255.0
+
 
 def iterative_test_conv(settings, network_type=2):
     percents, iterations = generate_percentages([1.0,1.0,1.0],0.02,settings['pruning_percentages'])
@@ -30,9 +32,7 @@ def iterative_test_conv(settings, network_type=2):
 
     #Train original Network
     mask = prune(og_network, 1.0, 1.0, 1.0)
-    masked_weights = og_network.mask_weights(mask, og_network.get_weights())
-    #for w in masked_weights:
-    #    print(np.count_nonzero(w==0)/np.size(w))
+
     _, epoch = og_network.fit_batch(x_train, y_train, mask, init_weights, settings, x_test, y_test)
     es_epochs[0] = epoch
 
@@ -41,10 +41,9 @@ def iterative_test_conv(settings, network_type=2):
     histories[0] = test_acc
 
     #Prune the network for x amount of iterations, evaulate each iteration and save results
-    for i in range(0,iterations):
+    for i in range(6,iterations):
         print("Conv %: " + str(percents[i][0]) + ", Dense %: " + str(percents[i][1]) + ", Output %: " + str(percents[i][2]))
         mask = prune(og_network, percents[i][0],percents[i][1],percents[i][2])
-        masked_weights = og_network.mask_weights(mask, og_network.get_weights())
         #for w in masked_weights:
         #    print(np.count_nonzero(w==0)/np.size(w))
 
@@ -78,4 +77,4 @@ if __name__ == "__main__":
     uses_es = settings['use_es']
     uses_reinit = settings['use_random_init']
     filename = "conv" + str(network_type) + "_rand-" + str(uses_reinit) + "_es-" + str(uses_es) + "_data.npz"
-    np.savez(filename, histories=histories, es_epochs=es_epochs)
+    #np.savez(filename, histories=histories, es_epochs=es_epochs)
