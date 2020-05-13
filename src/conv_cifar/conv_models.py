@@ -5,7 +5,6 @@ from keras.layers import BatchNormalization
 
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn import svm
 
 from constants import OPTIMIZER_CONV2, OPTIMIZER_CONV4, OPTIMIZER_CONV6
 from tqdm import tqdm
@@ -62,6 +61,7 @@ class Network:
                 if isinstance(layer,layers.Dense) or isinstance(layer, layers.Conv2D):
                     new_weights.append(weights[idx]*mask[idx])
                     new_weights.append(layer.get_weights()[1])
+                    
                     """elif isinstance(layer, layers.Conv2D):
                     row, col, kern, filt = weights[idx].shape
                     temp_weight = weights[idx]
@@ -73,8 +73,6 @@ class Network:
                 else:
                     for w in layer.get_weights():
                         new_weights.append(w)
-            else:
-                continue
         return new_weights
 
     def fit_batch(self, data, labels, mask, weights_init, settings, test_data=None,test_labels=None):
