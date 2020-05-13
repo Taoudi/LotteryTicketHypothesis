@@ -31,8 +31,8 @@ def iterative_test_conv(settings, network_type=2):
     #Train original Network
     mask = prune(og_network, 1.0, 1.0, 1.0)
     masked_weights = og_network.mask_weights(mask, og_network.get_weights())
-    for w in masked_weights:
-        print(np.count_nonzero(w==0)/np.size(w))
+    #for w in masked_weights:
+    #    print(np.count_nonzero(w==0)/np.size(w))
     _, epoch = og_network.fit_batch(x_train, y_train, mask, init_weights, settings, x_test, y_test)
     es_epochs[0] = epoch
 
@@ -41,12 +41,12 @@ def iterative_test_conv(settings, network_type=2):
     histories[0] = test_acc
 
     #Prune the network for x amount of iterations, evaulate each iteration and save results
-    for i in range(12,iterations):
+    for i in range(0,iterations):
         print("Conv %: " + str(percents[i][0]) + ", Dense %: " + str(percents[i][1]) + ", Output %: " + str(percents[i][2]))
         mask = prune(og_network, percents[i][0],percents[i][1],percents[i][2])
         masked_weights = og_network.mask_weights(mask, og_network.get_weights())
-        for w in masked_weights:
-            print(np.count_nonzero(w==0)/np.size(w))
+        #for w in masked_weights:
+        #    print(np.count_nonzero(w==0)/np.size(w))
 
 
         if network_type == 2:
@@ -77,5 +77,5 @@ if __name__ == "__main__":
 
     uses_es = settings['use_es']
     uses_reinit = settings['use_random_init']
-    filename = "data/conv" + str(network_type) + "_rand-" + str(uses_reinit) + "_es-" + str(uses_es) + "_data.npz"
+    filename = "conv" + str(network_type) + "_rand-" + str(uses_reinit) + "_es-" + str(uses_es) + "_data.npz"
     np.savez(filename, histories=histories, es_epochs=es_epochs)
