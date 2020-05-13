@@ -41,7 +41,7 @@ def iterative_test_conv(settings, network_type=2):
     histories[0] = test_acc
 
     #Prune the network for x amount of iterations, evaulate each iteration and save results
-    for i in range(6,iterations):
+    for i in range(0,iterations):
         print("Conv %: " + str(percents[i][0]) + ", Dense %: " + str(percents[i][1]) + ", Output %: " + str(percents[i][2]))
         mask = prune(og_network, percents[i][0],percents[i][1],percents[i][2])
         #for w in masked_weights:
@@ -77,4 +77,4 @@ if __name__ == "__main__":
     uses_es = settings['use_es']
     uses_reinit = settings['use_random_init']
     filename = "conv" + str(network_type) + "_rand-" + str(uses_reinit) + "_es-" + str(uses_es) + "_data.npz"
-    #np.savez(filename, histories=histories, es_epochs=es_epochs)
+    np.savez(filename, histories=histories, es_epochs=es_epochs)
