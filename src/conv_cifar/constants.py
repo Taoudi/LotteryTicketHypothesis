@@ -38,6 +38,8 @@ SETTINGS_CONV6 = {
     'pruning_percentages' : [0.15, 0.2, 0.1]
 }
 
+TRIALS = 4
+
 OPTIMIZER_CONV2 = tf.keras.optimizers.Adam(learning_rate=2e-4)
 OPTIMIZER_CONV4 = tf.keras.optimizers.Adam(learning_rate=3e-4)
 OPTIMIZER_CONV6 = tf.keras.optimizers.Adam(learning_rate=3e-4)
