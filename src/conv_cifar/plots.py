@@ -1,20 +1,59 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from tools import generate_percentages
-from constants import SETTINGS_CONV4
-from matplotlib.ticker import ScalarFormatter
+from constants import SETTINGS_CONV2, SETTINGS_CONV4, SETTINGS_CONV6
 
-histories = np.load("data/conv4_rand-False_es-True_data.npz", allow_pickle=True)['histories']
 
-percentages, _ = generate_percentages([1.0, 1.0, 1.0], 0.02,SETTINGS_CONV4['pruning_percentages'])
+def plot_figure5_replica():
+    conv2_hist_reinit = np.load("data/conv2_rand-True_es-True_data.npz", allow_pickle=True)['histories']
+    conv2_epochs_reinit = np.load("data/conv2_rand-True_es-True_data.npz", allow_pickle=True)['es_epochs']
 
-percentages_list = list()
-percentages_list.append(100.0)
-for i in range(len(percentages)):
-    percentages_list.append(percentages[i][1]*100)
+    conv4_hist_reinit = np.load("data/conv4_rand-True_es-True_data.npz", allow_pickle=True)['histories']
+    conv4_epochs_reinit = np.load("data/conv4_rand-True_es-True_data.npz", allow_pickle=True)['es_epochs']
 
-plt.plot(percentages_list, histories)
+    conv6_hist_reinit = np.load("data/conv6_rand-True_es-True_data.npz", allow_pickle=True)['histories']
+    conv6_epochs_reinit = np.load("data/conv6_rand-True_es-True_data.npz", allow_pickle=True)['es_epochs']
 
-plt.xticks(np.arange(100, 0, -5))
-plt.xlim(100.5, -0.31)
-plt.show()
+    conv2_hist = np.load("data/conv2_rand-False_es-True_data.npz", allow_pickle=True)['histories']
+    conv2_epochs = np.load("data/conv2_rand-False_es-True_data.npz", allow_pickle=True)['es_epochs']
+
+    conv4_hist = np.load("data/conv4_rand-False_es-True_data.npz", allow_pickle=True)['histories']
+    conv4_epochs = np.load("data/conv4_rand-False_es-True_data.npz", allow_pickle=True)['es_epochs']
+
+    conv6_hist = np.load("data/conv6_rand-False_es-True_data.npz", allow_pickle=True)['histories']
+    conv6_epochs = np.load("data/conv6_rand-False_es-True_data.npz", allow_pickle=True)['es_epochs']
+
+
+    percentages24, _ = generate_percentages([1.0, 1.0, 1.0], 0.02, SETTINGS_CONV2['pruning_percentages'])
+    percentages_list_conv24 = list()
+    percentages_list_conv24.append(100.0)
+    for i in range(len(percentages24)):
+        percentages_list_conv24.append(percentages24[i][1]*100)
+
+    percentages6, _ = generate_percentages([1.0, 1.0, 1.0], 0.02, SETTINGS_CONV6['pruning_percentages'])
+
+    percentages_list_conv6 = list()
+    percentages_list_conv6.append(100.0)
+    for i in range(len(percentages6)):
+        percentages_list_conv6.append(percentages6[i][1]*100)
+    
+    plt.plot(percentages_list_conv6, conv6_hist, label="Conv-6", marker='v', color='g')
+    plt.plot(percentages_list_conv6, conv6_hist_reinit, label="Conv-6", marker='v', color='g', linestyle='--')
+
+    plt.plot(percentages_list_conv24, conv4_hist, label="Conv-4", marker='o', color='y')
+    plt.plot(percentages_list_conv24, conv4_hist_reinit, label="Conv-4", marker='o', color='y', linestyle='--')
+
+    plt.plot(percentages_list_conv24, conv2_hist, label="Conv-2", marker='+', color='b')
+    plt.plot(percentages_list_conv24, conv2_hist_reinit, label="Conv-2", marker='+', color='b', linestyle='--')
+
+    plt.legend()
+    plt.grid()
+    plt.title("Accuracy at Early-stop for oneshot pruning")
+    plt.xlabel("Percent of Weights Remaining")
+    plt.ylabel("Accuracy at Early-Stop (Test)")
+
+    plt.xticks(np.arange(100, 0, -5))
+    plt.xlim(100.5, -0.31)
+    plt.show()
+
+plot_figure5_replica()
