@@ -73,6 +73,7 @@ def iterative_test_conv(settings, network_type=2,filename=""):
 if __name__ == "__main__":
     network_type = 6
     settings = SETTINGS_CONV6
+
     uses_reinit = settings['use_random_init']
     uses_dropout = settings['use_dropout']
     uses_rate = settings['dropout_rate']

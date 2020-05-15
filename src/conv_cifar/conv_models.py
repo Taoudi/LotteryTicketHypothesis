@@ -130,20 +130,42 @@ class CONV2_NETWORK(Network):
     def __init__(self,settings):
         dropout = settings['use_dropout']
         rate = settings['dropout_rate']
+        batch_norm = settings['use_batch_norm']
+        
         self.model = models.Sequential()
+        if batch_norm:
+            self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
+        
+        if dropout:
+            self.model.add(layers.Dropout(rate))
+        
+        if not batch_norm:
+            self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None),input_shape=(32, 32, 3)))
+        else:
+            self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None)))
 
-        self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
         if dropout:
             self.model.add(layers.Dropout(rate))
-        self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
-        self.model.add(layers.BatchNormalization())
+        
+        self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None)))
+        if batch_norm:
+            self.model.add(layers.BatchNormalization())
+        
         if dropout:
             self.model.add(layers.Dropout(rate))
+        
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
+
         self.model.add(layers.Flatten())
+        if dropout:
+            self.model.add(layers.Dropout(rate))
 
         self.model.add(layers.Dense(256,activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+
+        if dropout:
+            self.model.add(layers.Dropout(rate))
+
         self.model.add(layers.Dense(256,activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.Dense(10))
 
@@ -158,33 +180,61 @@ class CONV2_NETWORK(Network):
 
 class CONV4_NETWORK(Network):
     def __init__(self, settings):
-        self.model = models.Sequential()
         dropout = settings['use_dropout']
         rate = settings['dropout_rate']
-        self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
+        batch_norm = settings['use_batch_norm']
+
+        self.model = models.Sequential()
+        
+        if batch_norm:
+            self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
+        
         if dropout:
             self.model.add(layers.Dropout(rate))
-        self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None)))
-        self.model.add(layers.BatchNormalization())
+        
+        if not batch_norm:
+            self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None),input_shape=(32, 32, 3)))
+        else:
+            self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None)))
+        
+        if batch_norm:
+            self.model.add(layers.BatchNormalization())
+        
         if dropout:
             self.model.add(layers.Dropout(rate))
+        
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
 
-        self.model.add(layers.BatchNormalization())
+        if batch_norm:
+            self.model.add(layers.BatchNormalization())
+
         if dropout:
             self.model.add(layers.Dropout(rate))
+
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
-        self.model.add(layers.BatchNormalization())
+        
+        if batch_norm:
+            self.model.add(layers.BatchNormalization())
+
         if dropout:
             self.model.add(layers.Dropout(rate))
+            
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
 
         self.model.add(layers.Flatten())
 
+        if dropout:
+            self.model.add(layers.Dropout(rate))
+
         self.model.add(layers.Dense(256,activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+
+        if dropout:
+            self.model.add(layers.Dropout(rate))
+
         self.model.add(layers.Dense(256,activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+        
         self.model.add(layers.Dense(10))
 
         self.model.compile(OPTIMIZER_CONV4,
@@ -197,40 +247,75 @@ class CONV6_NETWORK(Network):
     def __init__(self,settings):
         dropout = settings['use_dropout']
         rate = settings['dropout_rate']
+        batch_norm = settings['use_batch_norm']
+
         self.model = models.Sequential()
-        self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
+        
+        if batch_norm:
+            self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
+
+        #if not batch_norm:
+            #self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None),input_shape=(32, 32, 3)))
+        #else:
+        if not batch_norm:
+            self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None), input_shape=(32,32,3)))
+        else:
+            self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None)))
+
+
+        if batch_norm:
+            self.model.add(layers.BatchNormalization())
+
         if dropout:
             self.model.add(layers.Dropout(rate))
-        self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None)))
-        self.model.add(layers.BatchNormalization())
-        if dropout:
-            self.model.add(layers.Dropout(rate))
+
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
-        
-        self.model.add(layers.BatchNormalization())
+
+        if batch_norm:
+            self.model.add(layers.BatchNormalization())
+
         if dropout:
             self.model.add(layers.Dropout(rate))
+
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
-        self.model.add(layers.BatchNormalization())
+       
+        if batch_norm:
+            self.model.add(layers.BatchNormalization())
+
         if dropout:
             self.model.add(layers.Dropout(rate))
+            
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
         
-        self.model.add(layers.BatchNormalization())
+        if batch_norm:
+            self.model.add(layers.BatchNormalization())
+
         if dropout:
             self.model.add(layers.Dropout(rate))
+
         self.model.add(layers.Conv2D(256, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
-        self.model.add(layers.BatchNormalization())
+        
+        if batch_norm:
+            self.model.add(layers.BatchNormalization())
+
         if dropout:
             self.model.add(layers.Dropout(rate))
+
         self.model.add(layers.Conv2D(256, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2),padding='same'))
 
         self.model.add(layers.Flatten())
 
+        if dropout:
+            self.model.add(layers.Dropout(rate))
+
         self.model.add(layers.Dense(256,activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
+
+        if dropout:
+            self.model.add(layers.Dropout(rate))
+
         self.model.add(layers.Dense(256,activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.Dense(10))
 
