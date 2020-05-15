@@ -94,33 +94,35 @@ def plot_figure4a_replica():
 
     # Plots Early-Stop iteration (Figure 4ai)
     plt.plot(percentages_list, hist_iter_epochs, label="Winning Ticket (Iterative)", color='b', marker='v')
-    plt.plot(percentages_list, hist_iter_reinit_epochs, label="Random Reinit (Iterative)", color='y', marker='.', linestyle='--')
+    plt.plot(percentages_list, hist_iter_reinit_epochs, label="Random Reinit (Iterative)", color='k', marker='.', linestyle='--')
     plt.plot(percentages_list, hist_os_epochs, label="Winning Ticket (Oneshot)", color='g', marker='+')
     plt.plot(percentages_list, hist_os_reinit_epochs, label="Random Reinit (Oneshot)", color='r', marker='x', linestyle='--')
     
     plt.legend()
-    plt.grid()
     plt.title("Early stopping iteration for all pruning methods")
     plt.xlabel("Percent of Weights Remaining")
     plt.ylabel("Early-Stop Epoch (Val.)")
 
-    plt.xticks(np.arange(100, 0, -5))
-    plt.xlim(100.5, -0.31)
+    plt.xlim(left=100.5, right=1.5)
+    plt.xscale('log')
+    plt.grid()
+    plt.xticks([100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75], [100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75])
     plt.show()
     # Plots accuracy at early-stop (Figure 4aii)
     plt.plot(percentages_list, hist_iter, label="Winning Ticket (Iterative)", color='b', marker='v')
-    plt.plot(percentages_list, hist_iter_reinit, label="Random Reinit (Iterative)", color='y', marker='.', linestyle='--')
+    plt.plot(percentages_list, hist_iter_reinit, label="Random Reinit (Iterative)", color='k', marker='.', linestyle='--')
     plt.plot(percentages_list, hist_os, label="Winning Ticket (Oneshot)", color='g', marker='+')
     plt.plot(percentages_list, hist_os_reinit, label="Random Reinit (Oneshot)", color='r', marker='x', linestyle='--')
 
     plt.legend()
-    plt.grid()
     plt.title("Accuracy at Early-stop for all pruning methods")
     plt.xlabel("Percent of Weights Remaining")
     plt.ylabel("Accuracy at Early-Stop (Test)")
 
-    plt.xticks(np.arange(100, 0, -5))
-    plt.xlim(100.5, -0.31)
+    plt.xlim(left=100.5, right=1.5)
+    plt.xscale('log')
+    plt.grid()
+    plt.xticks([100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75], [100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75])
     plt.show()
 
 def plot_figure4b_replica():
@@ -140,18 +142,19 @@ def plot_figure4b_replica():
         percentages_list.append(percentages[i][1]*100)
     
     plt.plot(percentages_list, hist_iter, label="Winning Ticket (Iterative)", color='b', marker='v')
-    plt.plot(percentages_list, hist_iter_reinit, label="Random Reinit (Iterative)", color='y', marker='.', linestyle='--')
+    plt.plot(percentages_list, hist_iter_reinit, label="Random Reinit (Iterative)", color='k', marker='.', linestyle='--')
     plt.plot(percentages_list, hist_os, label="Winning Ticket (Oneshot)", color='g', marker='+')
     plt.plot(percentages_list, hist_os_reinit, label="Random Reinit (Oneshot)", color='r', marker='x', linestyle='--')
     
     plt.legend()
-    plt.grid()
     plt.title("Accuracy at the end of training for different pruning methods")
     plt.xlabel("Percent of Weights Remaining")
     plt.ylabel("Accuracy at Iteration 20K (Test)")
 
-    plt.xticks(np.arange(100, 0, -5))
-    plt.xlim(100.5, -0.31)
+    plt.xlim(left=100.5, right=1.5)
+    plt.xscale('log')
+    plt.grid()
+    plt.xticks([100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75], [100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75])
     plt.show()
 
 def plot_figure4c_replica():
@@ -173,13 +176,14 @@ def plot_figure4c_replica():
     plt.plot(percentages_list, hist_os_reinit_epochs, label="Random Reinit (Oneshot)", color='r', marker='x', linestyle='--')
     
     plt.legend()
-    plt.grid()
     plt.title("Early stopping iteration for oneshot pruning")
     plt.xlabel("Percent of Weights Remaining")
     plt.ylabel("Early-Stop Epoch (Val.)")
 
-    plt.xticks(np.arange(100, 0, -5))
-    plt.xlim(100.5, -0.31)
+    plt.xlim(left=100.5, right=1.5)
+    plt.xscale('log')
+    plt.grid()
+    plt.xticks([100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75], [100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75])
     plt.show()
 
     # Plots accuracy at early-stop (Figure 4cii)
@@ -188,11 +192,14 @@ def plot_figure4c_replica():
     plt.plot(percentages_list, hist_os_reinit, label="Random Reinit (Oneshot)", color='r', marker='x', linestyle='--')
 
     plt.legend()
-    plt.grid()
     plt.title("Accuracy at Early-stop for oneshot pruning")
     plt.xlabel("Percent of Weights Remaining")
     plt.ylabel("Accuracy at Early-Stop (Test)")
 
-    plt.xticks(np.arange(100, 0, -5))
-    plt.xlim(100.5, -0.31)
+    plt.xlim(left=100.5, right=1.5)
+    plt.xscale('log')
+    plt.grid()
+    plt.xticks([100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75], [100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75])
     plt.show()
+
+plot_figure4c_replica()
