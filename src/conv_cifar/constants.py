@@ -32,7 +32,7 @@ SETTINGS_CONV4 = {
 }
 
 SETTINGS_CONV6 = {
-    'n_epochs' : 1,
+    'n_epochs' : 10,
     'use_es': True,
     'split': 0.1,
     'use_random_init': False,
