@@ -5,6 +5,7 @@ from constants import SETTINGS_CONV2, SETTINGS_CONV4, SETTINGS_CONV6
 
 
 def plot_figure5_replica():
+    #Load the data
     conv2_hist_reinit = np.load("data/conv2_rand-True_es-True_data.npz", allow_pickle=True)['histories']
     conv2_epochs_reinit = np.load("data/conv2_rand-True_es-True_data.npz", allow_pickle=True)['es_epochs']
 
@@ -23,6 +24,7 @@ def plot_figure5_replica():
     conv6_hist = np.load("data/conv6_rand-False_es-True_data.npz", allow_pickle=True)['histories']
     conv6_epochs = np.load("data/conv6_rand-False_es-True_data.npz", allow_pickle=True)['es_epochs']
 
+    #Create consistent mapping
 
     percentages24, _ = generate_percentages([1.0, 1.0, 1.0], 0.02, SETTINGS_CONV2['pruning_percentages'])
     percentages_list_conv24 = list()
@@ -37,23 +39,48 @@ def plot_figure5_replica():
     for i in range(len(percentages6)):
         percentages_list_conv6.append(percentages6[i][1]*100)
     
+    # Plots test accuracy at early-stop for all percentages of weights remaining
+
     plt.plot(percentages_list_conv6, conv6_hist, label="Conv-6", marker='v', color='g')
-    plt.plot(percentages_list_conv6, conv6_hist_reinit, label="Conv-6", marker='v', color='g', linestyle='--')
+    plt.plot(percentages_list_conv6, conv6_hist_reinit, label="Conv-6 (reinit)", marker='v', color='g', linestyle='--')
 
     plt.plot(percentages_list_conv24, conv4_hist, label="Conv-4", marker='o', color='y')
-    plt.plot(percentages_list_conv24, conv4_hist_reinit, label="Conv-4", marker='o', color='y', linestyle='--')
+    plt.plot(percentages_list_conv24, conv4_hist_reinit, label="Conv-4 (reinit)", marker='o', color='y', linestyle='--')
 
     plt.plot(percentages_list_conv24, conv2_hist, label="Conv-2", marker='+', color='b')
-    plt.plot(percentages_list_conv24, conv2_hist_reinit, label="Conv-2", marker='+', color='b', linestyle='--')
+    plt.plot(percentages_list_conv24, conv2_hist_reinit, label="Conv-2 (reinit)", marker='+', color='b', linestyle='--')
 
     plt.legend()
-    plt.grid()
-    plt.title("Accuracy at Early-stop for oneshot pruning")
+    plt.title("Test accuracy for different ConvNets using early-stop criterion")
     plt.xlabel("Percent of Weights Remaining")
     plt.ylabel("Accuracy at Early-Stop (Test)")
 
-    plt.xticks(np.arange(100, 0, -5))
-    plt.xlim(100.5, -0.31)
+    plt.xlim(left=100.5, right=1.5)
+    plt.xscale('log')
+    plt.grid()
+    plt.xticks([100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75], [100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75])
+    plt.show()
+
+    # Plots the epoch at which early-stop was occured for all percentages of weights remaining
+
+    plt.plot(percentages_list_conv6, conv6_epochs, label="Conv-6", marker='v', color='g')
+    plt.plot(percentages_list_conv6, conv6_epochs_reinit, label="Conv-6 (reinit)", marker='v', color='g', linestyle='--')
+
+    plt.plot(percentages_list_conv24, conv4_epochs, label="Conv-4", marker='o', color='y')
+    plt.plot(percentages_list_conv24, conv4_epochs_reinit, label="Conv-4 (reinit)", marker='o', color='y', linestyle='--')
+
+    plt.plot(percentages_list_conv24, conv2_epochs, label="Conv-2", marker='+', color='b')
+    plt.plot(percentages_list_conv24, conv2_epochs_reinit, label="Conv-2 (reinit)", marker='+', color='b', linestyle='--')
+
+    plt.legend()
+    plt.title("Early-stop epoch for different ConvNets using early-stop criterion")
+    plt.xlabel("Percent of Weights Remaining")
+    plt.ylabel("Early-Stop Epoch (Val.)")
+
+    plt.xlim(left=100.5, right=1.5)
+    plt.xscale('log')
+    plt.grid()
+    plt.xticks([100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75], [100, 51.4, 26.5, 13.7, 7.1, 3.7, 1.75])
     plt.show()
 
 plot_figure5_replica()
