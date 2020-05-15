@@ -14,18 +14,18 @@ x_test = x_test.astype('float32')
 x_train = x_train / 255.0
 x_test = x_test / 255.0
 
-def iterative_test_conv(settings, network_type=2):
+def iterative_test_conv(settings, network_type=2,filename=""):
     percents, iterations = generate_percentages([1.0,1.0,1.0],0.02,settings['pruning_percentages'])
     histories = np.zeros(iterations+1)
     es_epochs = np.zeros(iterations+1)
-
-    for _ in range(TRIALS):
+  
+    for trial in range(TRIALS):
         if network_type == 2:
-            og_network = CONV2_NETWORK(dropout=settings['use_dropout'], use_es = settings['use_es'], patience=settings['patience'])
+            og_network = CONV2_NETWORK(settings)
         elif network_type == 4:
-            og_network = CONV4_NETWORK(dropout=settings['use_dropout'], use_es = settings['use_es'], patience=settings['patience'])
+            og_network = CONV4_NETWORK(settings)
         elif network_type == 6:
-            og_network = CONV6_NETWORK(dropout=settings['use_dropout'], use_es = settings['use_es'], patience=settings['patience'])
+            og_network = CONV6_NETWORK(settings)
         
         #Save initial weights of the original matrix
         init_weights = og_network.get_weights()
@@ -33,7 +33,7 @@ def iterative_test_conv(settings, network_type=2):
         #Train original Network
         mask = prune(og_network, 1.0, 1.0, 1.0)
 
-        _, epoch = og_network.fit_batch(x_train, y_train, mask, init_weights, settings, x_test, y_test)
+        _, epoch = og_network.fit_batch(x_train, y_train, mask, init_weights, x_test, y_test)
         es_epochs[0] += epoch
 
         #Evaluate original network and save results
@@ -49,32 +49,34 @@ def iterative_test_conv(settings, network_type=2):
 
 
             if network_type == 2:
-                pruned_network = CONV2_NETWORK(dropout=settings['use_dropout'], use_es = settings['use_es'])
+                pruned_network = CONV2_NETWORK(settings)
             elif network_type == 4:
-                pruned_network = CONV4_NETWORK(dropout=settings['use_dropout'], use_es = settings['use_es'])
+                pruned_network = CONV4_NETWORK(settings)
             elif network_type == 6:
-                pruned_network = CONV6_NETWORK(dropout=settings['use_dropout'], use_es = settings['use_es'])
+                pruned_network = CONV6_NETWORK(settings)
             
-            _, epoch = pruned_network.fit_batch(x_train,y_train,mask,init_weights,settings,x_test,y_test)
+            _, epoch = pruned_network.fit_batch(x_train,y_train,mask,init_weights,x_test,y_test)
             _, test_acc = pruned_network.evaluate_model(x_test,y_test)
             histories[i+1] += test_acc
             es_epochs[i+1] += epoch
 
             og_network = pruned_network
-    
+        
+        filename += "_trial-" + str(trial+1) + ".npz"
+        
+        print(histories)
+        print(es_epochs)
+        np.savez(filename, histories=histories, es_epochs=es_epochs)
     return histories, es_epochs
 
 
 if __name__ == "__main__":
     network_type = 6
     settings = SETTINGS_CONV6
-
-    histories, es_epochs = iterative_test_conv(settings, network_type)
-
-    print(histories)
-    print(es_epochs)
-
-    uses_es = settings['use_es']
     uses_reinit = settings['use_random_init']
-    filename = "conv" + str(network_type) + "_rand-" + str(uses_reinit) + "_es-" + str(uses_es) + "_data.npz"
-    np.savez(filename, histories=histories, es_epochs=es_epochs)
+    uses_dropout = settings['use_dropout']
+    uses_rate = settings['dropout_rate']
+    uses_es = settings['use_es']
+
+    filename = "conv" + str(network_type) + "_rand-" + str(uses_reinit) + "_es-" + str(uses_es) + "_dp-" + str(uses_dropout) + "_rate-" + str(uses_rate)
+    histories, es_epochs = iterative_test_conv(settings, network_type,filename)

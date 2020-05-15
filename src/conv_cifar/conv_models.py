@@ -11,14 +11,15 @@ from tqdm import tqdm
 
 
 class Network:
-    def __init__(self,use_earlyStopping=False,bs=60, patience=10):
-        self.batch_size = bs
-        self.early_stopping = use_earlyStopping
-        if use_earlyStopping:
-            self.es = EarlyStopping(monitor='val_loss', patience=patience)
+    def __init__(self,settings):
+        self.batch_size = settings['batch_size']
+        self.early_stopping = settings['use_es']
+        self.settings= settings
+        if settings['use_es']:
+            self.es = EarlyStopping(monitor='val_loss', patience=settings['patience'])
     
-    def fit(self,X,Y,SETTINGS):
-        history = self.model.fit(X, Y, epochs=SETTINGS['n_epochs'], callbacks=[self.es] if self.early_stopping else None, batch_size=self.batch_size,validation_split=SETTINGS['split'])
+    def fit(self,X,Y):
+        history = self.model.fit(X, Y, epochs=self.settings['n_epochs'], callbacks=[self.es] if self.early_stopping else None, batch_size=self.batch_size,validation_split=self.settings['split'])
         return history
 
     def evaluate_model(self, testX, testY):
@@ -75,29 +76,29 @@ class Network:
                         new_weights.append(w)
         return new_weights
 
-    def fit_batch(self, data, labels, mask, weights_init, settings, test_data=None,test_labels=None):
+    def fit_batch(self, data, labels, mask, weights_init, test_data=None,test_labels=None):
         """
             Train network with possibility of monitoring results each batch. The reasoning behind this is
             to be able to prune the weights accordingly.
         """
         if self.early_stopping:
-            stop_patience = settings['patience']
+            stop_patience = self.settings['patience']
         patience=0
         best_acc=0.0
         current_epoch = 0
         n = np.size(data,axis=0)
         n_batch = self.batch_size
         acc_history = []
-        x_train, y_train, x_val, y_val = self.shuffle_in_unison(data,labels, settings['split'])
+        x_train, y_train, x_val, y_val = self.shuffle_in_unison(data,labels, self.settings['split'])
 
-        if not settings['use_random_init']:
+        if not self.settings['use_random_init']:
             current_weights = weights_init
         else:
             current_weights = self.get_weights()
-        for e in range(0, settings['n_epochs']):
+        for e in range(0, self.settings['n_epochs']):
             x_train, y_train, _,_ = self.shuffle_in_unison(x_train,y_train,0.0)
             current_epoch=e
-            print("Epoch " + str(e+1) + "/" + str(settings['n_epochs']))
+            print("Epoch " + str(e+1) + "/" + str(self.settings['n_epochs']))
             for j in tqdm(range(int(len(x_train) / n_batch))):
                 masked_weights = self.mask_weights(mask, current_weights)
                 self.model.set_weights(masked_weights)
@@ -113,7 +114,7 @@ class Network:
                     patience=patience+1
                 else:
                     best_acc=val_acc
-            if settings['eval_test']:
+            if self.settings['eval_test']:
                 _, test_acc = self.evaluate_model(test_data,test_labels)
                 acc_history.append(test_acc)
             if self.early_stopping:
@@ -126,18 +127,18 @@ class Network:
 
 
 class CONV2_NETWORK(Network):
-    def __init__(self, dropout=False,use_es=False,patience=10):
-
+    def __init__(self,settings):
+        dropout = settings['use_dropout']
+        rate = settings['dropout_rate']
         self.model = models.Sequential()
 
         self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
         if dropout:
-            self.model.add(layers.Dropout(0.1))
+            self.model.add(layers.Dropout(rate))
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
-        #self.model.add(layers.BatchNormalization())
         self.model.add(layers.BatchNormalization())
         if dropout:
-            self.model.add(layers.Dropout(0.1))
+            self.model.add(layers.Dropout(rate))
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
         self.model.add(layers.Flatten())
@@ -151,31 +152,32 @@ class CONV2_NETWORK(Network):
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
         #self.es = EarlyStopping(monitor='val_loss', patience=SETTINGS['patience'])
-        super().__init__(use_earlyStopping=use_es,patience=patience)
+        super().__init__(settings)
 
 
 
 class CONV4_NETWORK(Network):
-    def __init__(self, dropout=False,use_es=False,patience=10):
+    def __init__(self, settings):
         self.model = models.Sequential()
-
+        dropout = settings['use_dropout']
+        rate = settings['dropout_rate']
         self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
         if dropout:
-            self.model.add(layers.Dropout(0.1))
+            self.model.add(layers.Dropout(rate))
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.BatchNormalization())
         if dropout:
-            self.model.add(layers.Dropout(0.1))
+            self.model.add(layers.Dropout(rate))
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
 
         self.model.add(layers.BatchNormalization())
         if dropout:
-            self.model.add(layers.Dropout(0.1))
+            self.model.add(layers.Dropout(rate))
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.BatchNormalization())
         if dropout:
-            self.model.add(layers.Dropout(0.1))
+            self.model.add(layers.Dropout(rate))
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
 
@@ -188,39 +190,41 @@ class CONV4_NETWORK(Network):
         self.model.compile(OPTIMIZER_CONV4,
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
-        super().__init__(use_earlyStopping=use_es,patience=patience)
+        super().__init__(settings)
 
 
 class CONV6_NETWORK(Network):
-    def __init__(self, dropout=False,use_es=False,patience=10):
+    def __init__(self,settings):
+        dropout = settings['use_dropout']
+        rate = settings['dropout_rate']
         self.model = models.Sequential()
         self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
         if dropout:
-            self.model.add(layers.Dropout(0.1))
+            self.model.add(layers.Dropout(rate))
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.BatchNormalization())
         if dropout:
-            self.model.add(layers.Dropout(0.1))
+            self.model.add(layers.Dropout(rate))
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
         
         self.model.add(layers.BatchNormalization())
         if dropout:
-            self.model.add(layers.Dropout(0.1))
+            self.model.add(layers.Dropout(rate))
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.BatchNormalization())
         if dropout:
-            self.model.add(layers.Dropout(0.1))
+            self.model.add(layers.Dropout(rate))
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
         
         self.model.add(layers.BatchNormalization())
         if dropout:
-            self.model.add(layers.Dropout(0.1))
+            self.model.add(layers.Dropout(rate))
         self.model.add(layers.Conv2D(256, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.BatchNormalization())
         if dropout:
-            self.model.add(layers.Dropout(0.1))
+            self.model.add(layers.Dropout(rate))
         self.model.add(layers.Conv2D(256, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2),padding='same'))
 
@@ -234,4 +238,4 @@ class CONV6_NETWORK(Network):
         self.model.compile(OPTIMIZER_CONV6,
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                 metrics=['accuracy'])
-        super().__init__(use_earlyStopping=use_es,patience=patience)
+        super().__init__(settings)

@@ -12,8 +12,10 @@ SETTINGS_CONV2 = {
     'use_random_init': False,
     'eval_test': True,
     'patience' : 1,
-    'use_dropout' : False,
-    'pruning_percentages' : [0.1, 0.2, 0.1]
+    'use_dropout' : True,
+    'dropout_rate' : 0.3,
+    'pruning_percentages' : [0.1, 0.2, 0.1],
+    'batch_size': 60
 }
 
 SETTINGS_CONV4 = {
@@ -23,22 +25,26 @@ SETTINGS_CONV4 = {
     'use_random_init': False,
     'eval_test': True,
     'patience' : 1,
-    'use_dropout' : False,
-    'pruning_percentages' : [0.1, 0.2, 0.1]
+    'use_dropout' : True,
+    'dropout_rate' : 0.3,
+    'pruning_percentages' : [0.1, 0.2, 0.1],
+    'batch_size': 60
 }
 
 SETTINGS_CONV6 = {
-    'n_epochs' : 10,
+    'n_epochs' : 1,
     'use_es': True,
     'split': 0.1,
     'use_random_init': False,
     'eval_test': True,
     'patience': 1,
-    'use_dropout': False,
-    'pruning_percentages' : [0.15, 0.2, 0.1]
+    'use_dropout': True,
+    'dropout_rate' : 0.3,
+    'pruning_percentages' : [0.15, 0.2, 0.1],
+    'batch_size': 60
 }
 
-TRIALS = 4
+TRIALS = 5
 
 OPTIMIZER_CONV2 = tf.keras.optimizers.Adam(learning_rate=2e-4)
 OPTIMIZER_CONV4 = tf.keras.optimizers.Adam(learning_rate=3e-4)
