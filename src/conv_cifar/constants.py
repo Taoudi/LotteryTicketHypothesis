@@ -6,28 +6,28 @@ from tensorflow import keras
 """
 
 SETTINGS_CONV2 = {
-    'n_epochs' : 10,
+    'n_epochs' : 20,
     'use_es': True,
     'split': 0.1,
     'use_random_init': False,
     'eval_test': True,
-    'patience' : 1,
+    'patience' : 3,
     'use_dropout' : True,
-    'dropout_rate' : 0.1,
+    'dropout_rate' : 0.25,
     'pruning_percentages' : [0.1, 0.2, 0.1],
     'batch_size': 60,
     'use_batch_norm' : False
 }
 
 SETTINGS_CONV4 = {
-    'n_epochs' : 10,
+    'n_epochs' : 20,
     'use_es': True,
     'split': 0.1,
     'use_random_init': False,
     'eval_test': True,
-    'patience' : 1,
+    'patience' : 3,
     'use_dropout' : True,
-    'dropout_rate' : 0.1,
+    'dropout_rate' : 0.25,
     'pruning_percentages' : [0.1, 0.2, 0.1],
     'batch_size': 60,
     'use_batch_norm' : False
@@ -41,7 +41,7 @@ SETTINGS_CONV6 = {
     'eval_test': True,
     'patience': 3,
     'use_dropout': True,
-    'dropout_rate' : 0.5,
+    'dropout_rate' : 0.25,
     'pruning_percentages' : [0.15, 0.2, 0.1],
     'batch_size': 60,
     'use_batch_norm' : False

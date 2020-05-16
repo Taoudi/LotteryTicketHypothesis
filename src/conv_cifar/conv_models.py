@@ -136,9 +136,6 @@ class CONV2_NETWORK(Network):
         if batch_norm:
             self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
         
-        if dropout:
-            self.model.add(layers.Dropout(rate))
-        
         if not batch_norm:
             self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None),input_shape=(32, 32, 3)))
         else:
@@ -188,9 +185,6 @@ class CONV4_NETWORK(Network):
         
         if batch_norm:
             self.model.add(layers.BatchNormalization(input_shape=(32, 32, 3)))
-        
-        if dropout:
-            self.model.add(layers.Dropout(rate))
         
         if not batch_norm:
             self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None),input_shape=(32, 32, 3)))
