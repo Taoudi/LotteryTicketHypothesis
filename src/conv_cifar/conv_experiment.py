@@ -62,11 +62,11 @@ def iterative_test_conv(settings, network_type=2,filename=""):
 
             og_network = pruned_network
         
-        filename += "_trial-" + str(trial+1) + ".npz"
+        filename += "_trial-" + str(trial+1)
         
         print(histories)
         print(es_epochs)
-        np.savez(filename, histories=histories, es_epochs=es_epochs)
+        np.savez(filename + ".npz", histories=histories, es_epochs=es_epochs)
     return histories, es_epochs
 
 
