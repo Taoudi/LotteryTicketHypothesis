@@ -140,16 +140,10 @@ class CONV2_NETWORK(Network):
             self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None),input_shape=(32, 32, 3)))
         else:
             self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None)))
-
-        if dropout:
-            self.model.add(layers.Dropout(rate))
         
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer=initializers.glorot_normal(seed=None)))
         if batch_norm:
             self.model.add(layers.BatchNormalization())
-        
-        if dropout:
-            self.model.add(layers.Dropout(rate))
         
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
@@ -194,8 +188,6 @@ class CONV4_NETWORK(Network):
         if batch_norm:
             self.model.add(layers.BatchNormalization())
         
-        if dropout:
-            self.model.add(layers.Dropout(rate))
         
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
@@ -203,16 +195,11 @@ class CONV4_NETWORK(Network):
         if batch_norm:
             self.model.add(layers.BatchNormalization())
 
-        if dropout:
-            self.model.add(layers.Dropout(rate))
-
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         
         if batch_norm:
             self.model.add(layers.BatchNormalization())
 
-        if dropout:
-            self.model.add(layers.Dropout(rate))
             
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
@@ -260,8 +247,6 @@ class CONV6_NETWORK(Network):
         if batch_norm:
             self.model.add(layers.BatchNormalization())
 
-        if dropout:
-            self.model.add(layers.Dropout(rate))
 
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
@@ -269,33 +254,22 @@ class CONV6_NETWORK(Network):
         if batch_norm:
             self.model.add(layers.BatchNormalization())
 
-        if dropout:
-            self.model.add(layers.Dropout(rate))
-
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
        
         if batch_norm:
             self.model.add(layers.BatchNormalization())
-
-        if dropout:
-            self.model.add(layers.Dropout(rate))
             
         self.model.add(layers.Conv2D(128, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2)))
         
         if batch_norm:
             self.model.add(layers.BatchNormalization())
-
-        if dropout:
-            self.model.add(layers.Dropout(rate))
-
+            
         self.model.add(layers.Conv2D(256, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         
         if batch_norm:
             self.model.add(layers.BatchNormalization())
 
-        if dropout:
-            self.model.add(layers.Dropout(rate))
 
         self.model.add(layers.Conv2D(256, (3, 3), activation='relu',kernel_initializer=initializers.glorot_normal(seed=None)))
         self.model.add(layers.MaxPooling2D((2, 2),padding='same'))
