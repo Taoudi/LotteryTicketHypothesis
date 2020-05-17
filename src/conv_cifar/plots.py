@@ -51,7 +51,7 @@ def plot_no_batch_norm():
     plt.plot(percentages_list_conv24, conv2_hist_reinit, label="Conv-2 (reinit)", marker='+', color='b', linestyle='--')
     
     plt.legend()
-    plt.title("Test accuracy for different ConvNets no batch normalization")
+    plt.title("Test accuracy for different ConvNets (Without batch normalization)")
     plt.xlabel("Percent of Weights Remaining")
     plt.ylabel("Accuracy at Early-Stop (Test)")
 
@@ -74,7 +74,7 @@ def plot_no_batch_norm():
     plt.plot(percentages_list_conv24, conv2_epochs_reinit, label="Conv-2 (reinit)", marker='+', color='b', linestyle='--')
 
     plt.legend()
-    plt.title("Early-stop epoch for different ConvNets using early-stop criterion")
+    plt.title("Early-stop epoch for different ConvNets using early-stop criterion (Without batch normalization)")
     plt.xlabel("Percent of Weights Remaining")
     plt.ylabel("Early-Stop Epoch (Val.)")
 
