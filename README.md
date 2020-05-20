@@ -33,6 +33,6 @@ conv_cifar consists all code, data and plots for the convolutional network pruni
 
 ```plots.py``` - code for plotting
 
-```pruning.py``` - code for pruniing
+```pruning.py``` - code for pruning
 
 ```tools.py``` - helper functions
